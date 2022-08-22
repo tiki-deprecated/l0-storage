@@ -1,0 +1,73 @@
+openapi: 3.0.1
+info:
+  title: L0 Storage
+  description: Long term immutable block storage.
+  license:
+    name: MIT
+    url: https://github.com/tiki/l0-storage/blob/main/LICENSE
+  version: 0.0.1
+externalDocs:
+  description: javadocs
+  url: coming soon
+servers:
+- url: coming soon
+paths:
+  /health:
+    get:
+      tags:
+      - health-check-controller
+      operationId: get
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiReplyAOObject'
+components:
+  schemas:
+    ApiReplyAOMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+    ApiReplyAOObject:
+      type: object
+      properties:
+        status:
+          type: string
+        code:
+          type: integer
+          format: int32
+        data:
+          type: object
+        page:
+          $ref: '#/components/schemas/ApiReplyAOPage'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiReplyAOMessage'
+    ApiReplyAOPage:
+      type: object
+      properties:
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        page:
+          type: integer
+          format: int32
