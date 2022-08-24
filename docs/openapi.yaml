@@ -12,53 +12,135 @@ externalDocs:
 servers:
 - url: coming soon
 paths:
+  /api/latest/api-id/new:
+    post:
+      tags:
+      - API Id
+      summary: Request a new API Id
+      operationId: postNew
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiIdAORsp'
   /health:
     get:
       tags:
-      - health-check-controller
+      - Health
       operationId: get
       responses:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: '#/components/schemas/ApiReplyAOObject'
-components:
-  schemas:
-    ApiReplyAOMessage:
-      type: object
-      properties:
-        code:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                message: OK
+  /api/latest/api-id:
+    get:
+      tags:
+      - API Id
+      summary: Get all provisioned API Ids
+      operationId: getAll
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
           type: integer
           format: int32
-        status:
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiPageApiIdAORsp'
+  /api/latest/api-id/key/{api-id}:
+    get:
+      tags:
+      - API Id
+      summary: Get an API Id's properties
+      operationId: getKey
+      parameters:
+      - name: api-id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiIdAORsp'
+    delete:
+      tags:
+      - API Id
+      summary: Revoke an API Id (permanent)
+      operationId: deleteKey
+      parameters:
+      - name: api-id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiIdAORsp'
+components:
+  schemas:
+    ApiIdAORsp:
+      type: object
+      properties:
+        apiId:
+          type: string
+        valid:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+    ApiError:
+      type: object
+      properties:
+        id:
           type: string
         message:
+          type: string
+        detail:
+          type: string
+        help:
           type: string
         properties:
           type: object
           additionalProperties:
             type: string
-    ApiReplyAOObject:
+    ApiPageApiIdAORsp:
       type: object
       properties:
-        status:
-          type: string
-        code:
-          type: integer
-          format: int32
-        data:
-          type: object
-        page:
-          $ref: '#/components/schemas/ApiReplyAOPage'
-        messages:
+        elements:
           type: array
           items:
-            $ref: '#/components/schemas/ApiReplyAOMessage'
-    ApiReplyAOPage:
-      type: object
-      properties:
+            $ref: '#/components/schemas/ApiIdAORsp'
         size:
           type: integer
           format: int32

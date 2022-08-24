@@ -10,8 +10,8 @@ import com.mytiki.l0_storage.features.latest.api_id.ApiIdDO;
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdRepository;
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdService;
 import com.mytiki.l0_storage.main.l0StorageApp;
-import com.mytiki.spring_rest_api.exception.ApiException;
-import com.mytiki.spring_rest_api.reply.ApiReplyAO;
+import com.mytiki.spring_rest_api.ApiException;
+import com.mytiki.spring_rest_api.ApiPage;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -21,7 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,10 +68,9 @@ public class ApiKeyTest {
 
     @Test
     public void Test_Revoke_NotFound() {
-        ApiException ex = assertThrows(ApiException.class, () -> {
-            service.revoke(UUID.randomUUID().toString());
-        });
-        assertEquals(ex.getCode(), HttpStatus.NOT_FOUND.value());
+        ApiException ex = assertThrows(ApiException.class,
+                () -> service.revoke(UUID.randomUUID().toString()));
+        assertEquals(ex.getHttpStatus(), HttpStatus.NOT_FOUND);
     }
 
     @Test
@@ -88,23 +86,22 @@ public class ApiKeyTest {
 
     @Test
     public void Test_Get_NotFound() {
-        ApiException ex = assertThrows(ApiException.class, () -> {
-            service.find(UUID.randomUUID().toString());
-        });
-        assertEquals(ex.getCode(), HttpStatus.NOT_FOUND.value());
+        ApiException ex = assertThrows(ApiException.class,
+                () -> service.find(UUID.randomUUID().toString()));
+        assertEquals(ex.getHttpStatus(), HttpStatus.NOT_FOUND);
     }
 
     @Test
     public void Test_GetAll_00_Success() {
         String customerId = UUID.randomUUID().toString();
         service.register(customerId);
-        ApiReplyAO<List<ApiIdAORsp>> all = service.all(customerId, 0, 100);
+        ApiPage<ApiIdAORsp> all = service.all(customerId, 0, 100);
 
-        assertEquals(all.getData().size(), 1);
-        assertEquals(all.getPage().getPage(), 0);
-        assertEquals(all.getPage().getTotalPages(), 1);
-        assertEquals(all.getPage().getSize(), 1);
-        assertEquals(all.getPage().getTotalElements(), 1);
+        assertEquals(all.getElements().size(), 1);
+        assertEquals(all.getPage(), 0);
+        assertEquals(all.getTotalPages(), 1);
+        assertEquals(all.getSize(), 1);
+        assertEquals(all.getTotalElements(), 1);
     }
 
     @Test
@@ -113,24 +110,23 @@ public class ApiKeyTest {
         service.register(customerId);
         service.register(customerId);
         service.register(customerId);
-        ApiReplyAO<List<ApiIdAORsp>> all = service.all(customerId, 1, 2);
+        ApiPage<ApiIdAORsp> all = service.all(customerId, 1, 2);
 
-        assertEquals(all.getData().size(), 1);
-        assertEquals(all.getPage().getPage(), 1);
-        assertEquals(all.getPage().getTotalPages(), 2);
-        assertEquals(all.getPage().getSize(), 1);
-        assertEquals(all.getPage().getTotalElements(), 3);
-
+        assertEquals(all.getElements().size(), 1);
+        assertEquals(all.getPage(), 1);
+        assertEquals(all.getTotalPages(), 2);
+        assertEquals(all.getSize(), 1);
+        assertEquals(all.getTotalElements(), 3);
     }
 
     @Test
     public void Test_GetAll_Empty() {
-        ApiReplyAO<List<ApiIdAORsp>> all = service.all(UUID.randomUUID().toString(), 0, 100);
+        ApiPage<ApiIdAORsp> all = service.all(UUID.randomUUID().toString(), 0, 100);
 
-        assertEquals(all.getData().size(), 0);
-        assertEquals(all.getPage().getPage(), 0);
-        assertEquals(all.getPage().getTotalPages(), 0);
-        assertEquals(all.getPage().getSize(), 0);
-        assertEquals(all.getPage().getTotalElements(), 0);
+        assertEquals(all.getElements().size(), 0);
+        assertEquals(all.getPage(), 0);
+        assertEquals(all.getTotalPages(), 0);
+        assertEquals(all.getSize(), 0);
+        assertEquals(all.getTotalElements(), 0);
     }
 }

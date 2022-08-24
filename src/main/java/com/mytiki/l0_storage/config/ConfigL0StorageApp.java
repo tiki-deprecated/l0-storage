@@ -6,8 +6,7 @@
 package com.mytiki.l0_storage.config;
 
 import com.mytiki.l0_storage.utilities.UtilitiesConfig;
-import com.mytiki.spring_rest_api.exception.ApiExceptionHandlerDefault;
-import com.mytiki.spring_rest_api.reply.ApiReplyHandlerDefault;
+import com.mytiki.spring_rest_api.ApiExceptionHandlerDefault;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -18,7 +17,6 @@ import java.util.TimeZone;
 
 @Import({
         ApiExceptionHandlerDefault.class,
-        ApiReplyHandlerDefault.class,
         UtilitiesConfig.class,
         ConfigFeatures.class
 })
