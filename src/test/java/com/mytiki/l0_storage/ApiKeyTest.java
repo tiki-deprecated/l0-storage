@@ -76,7 +76,7 @@ public class ApiKeyTest {
     @Test
     public void Test_Get_Success() {
         ApiIdAORsp register = service.register("test");
-        ApiIdAORsp get = service.find(register.getApiId());
+        ApiIdAORsp get = service.get(register.getApiId());
 
         assertEquals(register.getApiId(), get.getApiId());
         assertNotNull(get.getValid());

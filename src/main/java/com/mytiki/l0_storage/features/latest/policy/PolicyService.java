@@ -1,0 +1,114 @@
+/*
+ * Copyright (c) TIKI Inc.
+ * MIT license. See LICENSE file in root directory.
+ */
+
+package com.mytiki.l0_storage.features.latest.policy;
+
+import com.mytiki.l0_storage.features.latest.api_id.ApiIdDO;
+import com.mytiki.l0_storage.features.latest.api_id.ApiIdService;
+import com.mytiki.l0_storage.utilities.RSAHelper;
+import com.mytiki.l0_storage.utilities.SHAHelper;
+import com.mytiki.l0_storage.utilities.WasabiHelper;
+import com.mytiki.spring_rest_api.ApiExceptionBuilder;
+import org.apache.commons.codec.binary.Hex;
+import org.bouncycastle.asn1.pkcs.RSAPublicKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+
+import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+import java.util.UUID;
+
+public class PolicyService {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    private final PolicyRepository repository;
+    private final ApiIdService apiIdService;
+    private final WasabiHelper wasabiHelper;
+
+    public PolicyService(PolicyRepository repository, ApiIdService apiIdService, WasabiHelper wasabiHelper) {
+        this.repository = repository;
+        this.apiIdService = apiIdService;
+        this.wasabiHelper = wasabiHelper;
+    }
+
+    public PolicyAORsp request(String apiId, PolicyAOReq req){
+        String customerId = guardForApiId(apiId);
+        guardForSignature(req);
+        try {
+            String hashedCustomerId = Hex.encodeHexString(SHAHelper.sha3_256(customerId));
+            String hashedPubKey = Hex.encodeHexString(SHAHelper.sha3_256(req.getPubKey()));
+            String urnPrefix = hashedCustomerId + "/" + hashedPubKey;
+            String policyDate = ZonedDateTime.now().toLocalDate().format(DateTimeFormatter.BASIC_ISO_DATE);
+            String policy = wasabiHelper.buildPolicy(urnPrefix, policyDate);
+            String signature = wasabiHelper.signPolicy(policy, policyDate);
+
+            logPolicy(apiId, urnPrefix);
+
+            PolicyAORsp rsp = new PolicyAORsp();
+            rsp.setPolicy(policy);
+            rsp.setPolicySignature(signature);
+            rsp.setPolicyDate(policyDate);
+            rsp.setExpiresIn((long) (WasabiHelper.EXPIRATION_HOURS * 3600));
+            rsp.setUrnPrefix(urnPrefix);
+            return  rsp;
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new ApiExceptionBuilder(HttpStatus.EXPECTATION_FAILED)
+                    .message(e.getMessage())
+                    .cause(e.getCause())
+                    .build();
+        }
+    }
+
+    private String guardForApiId(String apiId){
+        Optional<ApiIdDO> apiIdDO = apiIdService.find(apiId);
+        if(apiIdDO.isEmpty())
+            throw new ApiExceptionBuilder(HttpStatus.FORBIDDEN)
+                    .message("Invalid API id")
+                    .detail("API Id does not exist")
+                    .build();
+        if(!apiIdDO.get().getValid())
+            throw new ApiExceptionBuilder(HttpStatus.FORBIDDEN)
+                    .message("Invalid API id")
+                    .detail("API Id has been revoked")
+                    .build();
+        return apiIdDO.get().getCustomerId();
+    }
+
+    private void guardForSignature(PolicyAOReq req){
+        try{
+            RSAPublicKey publicKey = RSAHelper.decodePublicKey(req.getPubKey());
+            boolean isValid = RSAHelper.verify(publicKey, req.getStringToSign(), req.getSignature());
+            if(!isValid)
+                throw new ApiExceptionBuilder(HttpStatus.BAD_REQUEST)
+                        .message("Failed to validate key/signature paid")
+                        .detail("Signature does not match plaintext")
+                        .properties("stringToSign", req.getStringToSign(), "signature", req.getSignature())
+                        .build();
+        } catch (IOException e) {
+            throw new ApiExceptionBuilder(HttpStatus.BAD_REQUEST)
+                    .message("Failed to validate key/signature paid")
+                    .detail("Public key encoding is incorrect")
+                    .cause(e.getCause())
+                    .build();
+        }
+    }
+
+    private void logPolicy(String apiId, String urnPrefix){
+        ApiIdDO apiIdDO = new ApiIdDO();
+        apiIdDO.setApiId(UUID.fromString(apiId));
+        PolicyDO policyDO = new PolicyDO();
+        policyDO.setCreated(ZonedDateTime.now(ZoneOffset.UTC));
+        policyDO.setUrnPrefix(urnPrefix);
+        policyDO.setApiId(apiIdDO);
+        repository.save(policyDO);
+    }
+}

@@ -37,7 +37,7 @@ public class ApiIdController {
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @RequestMapping(method = RequestMethod.GET, path = PATH_KEY + "/{api-id}")
     public ApiIdAORsp getKey(@PathVariable(name = "api-id") String apiId){
-        return service.find(apiId);
+        return service.get(apiId);
     }
 
     @Operation(summary = "Revoke an API Id (permanent)")

@@ -58,8 +58,8 @@ public class ApiIdService {
                     .build();
     }
 
-    public ApiIdAORsp find(String apiId) {
-        Optional<ApiIdDO> exists = repository.findById(UUID.fromString(apiId));
+    public ApiIdAORsp get(String apiId) {
+        Optional<ApiIdDO> exists = find(apiId);
         if(exists.isPresent()){
             return toRsp(exists.get());
         }else
@@ -86,5 +86,9 @@ public class ApiIdService {
         rsp.setCreated(apiIdDO.getCreated());
         rsp.setModified(apiIdDO.getModified());
         return rsp;
+    }
+
+    public Optional<ApiIdDO> find(String apiId) {
+        return repository.findById(UUID.fromString(apiId));
     }
 }
