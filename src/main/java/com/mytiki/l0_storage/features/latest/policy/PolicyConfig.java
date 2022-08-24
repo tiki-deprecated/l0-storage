@@ -25,4 +25,9 @@ public class PolicyConfig {
             @Autowired WasabiHelper wasabiHelper){
         return new PolicyService(repository, apiIdService, wasabiHelper);
     }
+
+    @Bean
+    public PolicyController policyController(@Autowired PolicyService service){
+        return new PolicyController(service);
+    }
 }

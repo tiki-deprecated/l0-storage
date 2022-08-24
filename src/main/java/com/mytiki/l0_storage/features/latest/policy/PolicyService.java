@@ -93,10 +93,10 @@ public class PolicyService {
                         .detail("Signature does not match plaintext")
                         .properties("stringToSign", req.getStringToSign(), "signature", req.getSignature())
                         .build();
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             throw new ApiExceptionBuilder(HttpStatus.BAD_REQUEST)
                     .message("Failed to validate key/signature paid")
-                    .detail("Public key encoding is incorrect")
+                    .detail("Encoding is incorrect")
                     .cause(e.getCause())
                     .build();
         }

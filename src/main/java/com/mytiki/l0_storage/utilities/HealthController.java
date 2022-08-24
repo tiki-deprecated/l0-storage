@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Health")
+@Tag(name = "HEALTH")
 @RestController
 @RequestMapping(value = ApiConstants.HEALTH_ROUTE)
-public class HealthCheckController {
+public class HealthController {
 
     @ApiResponse(
             responseCode = "200",

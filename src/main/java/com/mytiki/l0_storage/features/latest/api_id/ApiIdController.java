@@ -8,11 +8,14 @@ package com.mytiki.l0_storage.features.latest.api_id;
 import com.mytiki.spring_rest_api.ApiConstants;
 import com.mytiki.spring_rest_api.ApiPage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "API Id")
+@Tag(name = "API ID")
 @RestController
 @RequestMapping(value = ApiIdController.PATH_CONTROLLER)
 public class ApiIdController {
@@ -33,14 +36,19 @@ public class ApiIdController {
         return service.all("test", page, size);
     }
 
-    @Operation(summary = "Get an API Id's properties")
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    @Operation(summary = "Get an API Id's properties", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(
+                    schema = @Schema(implementation = ApiIdAORsp.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
     @RequestMapping(method = RequestMethod.GET, path = PATH_KEY + "/{api-id}")
     public ApiIdAORsp getKey(@PathVariable(name = "api-id") String apiId){
         return service.get(apiId);
     }
 
-    @Operation(summary = "Revoke an API Id (permanent)")
+    @Operation(summary = "Revoke an API Id (permanent)", responses = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(
+                    schema = @Schema(implementation = ApiIdAORsp.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @RequestMapping(method = RequestMethod.DELETE, path = PATH_KEY + "/{api-id}")
     public ApiIdAORsp deleteKey(@PathVariable(name = "api-id") String apiId){

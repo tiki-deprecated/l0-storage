@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Bean;
 public class UtilitiesConfig {
 
     @Bean
-    public HealthCheckController healthCheckController(){
-        return new HealthCheckController();
+    public HealthController healthController(){
+        return new HealthController();
     }
 
     @Bean

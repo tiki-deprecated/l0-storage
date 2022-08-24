@@ -12,12 +12,37 @@ externalDocs:
 servers:
 - url: coming soon
 paths:
+  /api/latest/policy:
+    post:
+      tags:
+      - POLICY
+      summary: Request a new policy
+      operationId: postNew
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyAOReq'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyAORsp'
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+        "417":
+          description: Expectation Failed
   /api/latest/api-id/new:
     post:
       tags:
-      - API Id
+      - API ID
       summary: Request a new API Id
-      operationId: postNew
+      operationId: postNew_1
       responses:
         "200":
           description: OK
@@ -28,7 +53,7 @@ paths:
   /health:
     get:
       tags:
-      - Health
+      - HEALTH
       operationId: get
       responses:
         "200":
@@ -42,7 +67,7 @@ paths:
   /api/latest/api-id:
     get:
       tags:
-      - API Id
+      - API ID
       summary: Get all provisioned API Ids
       operationId: getAll
       parameters:
@@ -70,7 +95,7 @@ paths:
   /api/latest/api-id/key/{api-id}:
     get:
       tags:
-      - API Id
+      - API ID
       summary: Get an API Id's properties
       operationId: getKey
       parameters:
@@ -80,15 +105,17 @@ paths:
         schema:
           type: string
       responses:
-        "404":
-          description: Not Found
+        "200":
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiIdAORsp'
+        "404":
+          description: Not Found
     delete:
       tags:
-      - API Id
+      - API ID
       summary: Revoke an API Id (permanent)
       operationId: deleteKey
       parameters:
@@ -98,14 +125,39 @@ paths:
         schema:
           type: string
       responses:
-        "404":
-          description: Not Found
+        "200":
+          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiIdAORsp'
+        "404":
+          description: Not Found
 components:
   schemas:
+    PolicyAORsp:
+      type: object
+      properties:
+        policy:
+          type: string
+        policySignature:
+          type: string
+        policyDate:
+          type: string
+        urnPrefix:
+          type: string
+        expiresIn:
+          type: integer
+          format: int64
+    PolicyAOReq:
+      type: object
+      properties:
+        pubKey:
+          type: string
+        signature:
+          type: string
+        stringToSign:
+          type: string
     ApiIdAORsp:
       type: object
       properties:

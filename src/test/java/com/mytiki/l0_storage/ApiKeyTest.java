@@ -87,7 +87,7 @@ public class ApiKeyTest {
     @Test
     public void Test_Get_NotFound() {
         ApiException ex = assertThrows(ApiException.class,
-                () -> service.find(UUID.randomUUID().toString()));
+                () -> service.get(UUID.randomUUID().toString()));
         assertEquals(ex.getHttpStatus(), HttpStatus.NOT_FOUND);
     }
 

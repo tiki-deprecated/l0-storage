@@ -7,10 +7,9 @@ package com.mytiki.l0_storage;
 
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdAORsp;
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdService;
-import com.mytiki.l0_storage.features.latest.policy.PolicyAOReq;
-import com.mytiki.l0_storage.features.latest.policy.PolicyAORsp;
-import com.mytiki.l0_storage.features.latest.policy.PolicyService;
+import com.mytiki.l0_storage.features.latest.policy.*;
 import com.mytiki.l0_storage.main.l0StorageApp;
+import com.mytiki.spring_rest_api.ApiException;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -24,14 +23,17 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.Base64;
+import java.util.List;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -43,13 +45,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class PolicyTest {
 
     @Autowired
-    private PolicyService policyService;
+    private PolicyService service;
 
     @Autowired
     private ApiIdService apiIdService;
 
+    @Autowired
+    private PolicyRepository repository;
+
     @Test
-    public void Test() throws NoSuchAlgorithmException, NoSuchProviderException, IOException, CryptoException {
+    public void Test_Request_Success() throws
+            NoSuchAlgorithmException, NoSuchProviderException, IOException, CryptoException {
         ApiIdAORsp register = apiIdService.register("test");
 
         KeyPair keyPair = generateRsa();
@@ -62,8 +68,101 @@ public class PolicyTest {
                 "dummy"
         );
 
-        PolicyAORsp rsp = policyService.request(register.getApiId(), req);
+        PolicyAORsp rsp = service.request(register.getApiId(), req);
         assertNotNull(rsp.getPolicy());
+        assertNotNull(rsp.getPolicyDate());
+        assertEquals(rsp.getExpiresIn(), 3600);
+        assertNotNull(rsp.getUrnPrefix());
+        assertNotNull(rsp.getPolicySignature());
+
+        List<PolicyDO> policyDOList = repository.findByApiIdApiId(UUID.fromString(register.getApiId()));
+        assertEquals(policyDOList.size(), 1);
+        assertNotNull(policyDOList.get(0).getPolicyId());
+        assertNotNull(policyDOList.get(0).getCreated());
+        assertEquals(policyDOList.get(0).getUrnPrefix(), rsp.getUrnPrefix());
+    }
+
+    @Test
+    public void Test_Request_Failure_NoApiId() throws
+            NoSuchAlgorithmException, NoSuchProviderException, IOException, CryptoException {
+
+        KeyPair keyPair = generateRsa();
+        BCRSAPublicKey pubKey = (BCRSAPublicKey) keyPair.getPublic();
+        BCRSAPrivateKey privateKey = (BCRSAPrivateKey) keyPair.getPrivate();
+
+        PolicyAOReq req = new PolicyAOReq(
+                encodePublicKey(pubKey),
+                rsaSign(privateKey, "dummy"),
+                "dummy"
+        );
+
+        ApiException ex = assertThrows(ApiException.class,
+                () -> service.request(UUID.randomUUID().toString(), req));
+
+        assertEquals(ex.getHttpStatus(), HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    public void Test_Request_Failure_BadEncoding() throws
+            NoSuchAlgorithmException, NoSuchProviderException, CryptoException {
+        ApiIdAORsp register = apiIdService.register("test");
+
+        KeyPair keyPair = generateRsa();
+        BCRSAPrivateKey privateKey = (BCRSAPrivateKey) keyPair.getPrivate();
+
+        PolicyAOReq req = new PolicyAOReq(
+                UUID.randomUUID().toString(),
+                rsaSign(privateKey, "dummy"),
+                "dummy"
+        );
+
+        ApiException ex = assertThrows(ApiException.class,
+                () -> service.request(register.getApiId(), req));
+
+        assertEquals(ex.getHttpStatus(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void Test_Request_Failure_BadSignature() throws
+            NoSuchAlgorithmException, NoSuchProviderException, IOException, CryptoException {
+        ApiIdAORsp register = apiIdService.register("test");
+
+        KeyPair keyPair = generateRsa();
+        BCRSAPublicKey pubKey = (BCRSAPublicKey) keyPair.getPublic();
+        BCRSAPrivateKey privateKey = (BCRSAPrivateKey) keyPair.getPrivate();
+
+        PolicyAOReq req = new PolicyAOReq(
+                encodePublicKey(pubKey),
+                rsaSign(privateKey, "wrong"),
+                "dummy"
+        );
+
+        ApiException ex = assertThrows(ApiException.class,
+                () -> service.request(register.getApiId(), req));
+
+        assertEquals(ex.getHttpStatus(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void Test_Request_Failure_InvalidApiId() throws
+            NoSuchAlgorithmException, NoSuchProviderException, IOException, CryptoException {
+        ApiIdAORsp register = apiIdService.register("test");
+        apiIdService.revoke(register.getApiId());
+
+        KeyPair keyPair = generateRsa();
+        BCRSAPublicKey pubKey = (BCRSAPublicKey) keyPair.getPublic();
+        BCRSAPrivateKey privateKey = (BCRSAPrivateKey) keyPair.getPrivate();
+
+        PolicyAOReq req = new PolicyAOReq(
+                encodePublicKey(pubKey),
+                rsaSign(privateKey, "dummy"),
+                "dummy"
+        );
+
+        ApiException ex = assertThrows(ApiException.class,
+                () -> service.request(register.getApiId(), req));
+
+        assertEquals(ex.getHttpStatus(), HttpStatus.FORBIDDEN);
     }
 
     private KeyPair generateRsa() throws NoSuchAlgorithmException, NoSuchProviderException {
