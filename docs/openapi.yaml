@@ -18,6 +18,12 @@ paths:
       - POLICY
       summary: Request a new policy
       operationId: postNew
+      parameters:
+      - name: x-api-id
+        in: header
+        required: true
+        schema:
+          type: string
       requestBody:
         content:
           application/json:
@@ -138,17 +144,35 @@ components:
     PolicyAORsp:
       type: object
       properties:
+        expires:
+          type: string
+        keyPrefix:
+          type: string
+        compute:
+          type: array
+          items:
+            type: string
+        fields:
+          $ref: '#/components/schemas/PolicyAORspFields'
+    PolicyAORspFields:
+      type: object
+      properties:
         policy:
           type: string
-        policySignature:
+        content-type:
           type: string
-        policyDate:
+        x-amz-credential:
           type: string
-        urnPrefix:
+        x-amz-algorithm:
           type: string
-        expiresIn:
-          type: integer
-          format: int64
+        x-amz-date:
+          type: string
+        x-amz-signature:
+          type: string
+        x-amz-object-lock-mode:
+          type: string
+        x-amz-object-lock-retain-until-date:
+          type: string
     PolicyAOReq:
       type: object
       properties:

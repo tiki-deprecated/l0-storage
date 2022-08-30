@@ -29,6 +29,9 @@ import java.util.UUID;
 
 public class PolicyService {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    public static final int POLICY_EXPIRATION_HOURS = 1;
+    //public static final int OBJECT_LOCK_YEARS = 10;
+    public static final int OBJECT_LOCK_MINUTES = 10;
 
     private final PolicyRepository repository;
     private final ApiIdService apiIdService;
@@ -47,18 +50,28 @@ public class PolicyService {
             String hashedCustomerId = Hex.encodeHexString(SHAHelper.sha3_256(customerId));
             String hashedPubKey = Hex.encodeHexString(SHAHelper.sha3_256(req.getPubKey()));
             String urnPrefix = hashedCustomerId + "/" + hashedPubKey;
-            String policyDate = ZonedDateTime.now().toLocalDate().format(DateTimeFormatter.BASIC_ISO_DATE);
-            String policy = wasabiHelper.buildPolicy(urnPrefix, policyDate);
-            String signature = wasabiHelper.signPolicy(policy, policyDate);
+
+            ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC).withNano(0);
+            String date = now.format(DateTimeFormatter.BASIC_ISO_DATE).replace("Z", "");
+            String expires = now.plusHours(POLICY_EXPIRATION_HOURS).format(DateTimeFormatter.ISO_INSTANT);
+            String lockUntil = now.plusMinutes(OBJECT_LOCK_MINUTES).format(DateTimeFormatter.ISO_INSTANT);
+
+            String policy = wasabiHelper.buildPolicy(urnPrefix, date, expires, lockUntil);
+            String signature = wasabiHelper.signPolicy(policy, date);
 
             logPolicy(apiId, urnPrefix);
 
+            PolicyAORspFields fields = new PolicyAORspFields();
+            fields.setPolicy(policy);
+            fields.setxAmzCredential(wasabiHelper.buildCredential(date));
+            fields.setxAmzDate(now.format(DateTimeFormatter.ISO_INSTANT));
+            fields.setxAmzObjectLockRetainUntilDate(lockUntil);
+            fields.setxAmzSignature(signature);
+
             PolicyAORsp rsp = new PolicyAORsp();
-            rsp.setPolicy(policy);
-            rsp.setPolicySignature(signature);
-            rsp.setPolicyDate(policyDate);
-            rsp.setExpiresIn((long) (WasabiHelper.EXPIRATION_HOURS * 3600));
-            rsp.setUrnPrefix(urnPrefix);
+            rsp.setExpires(expires);
+            rsp.setKeyPrefix(urnPrefix);
+            rsp.setFields(fields);
             return  rsp;
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             throw new ApiExceptionBuilder(HttpStatus.EXPECTATION_FAILED)

@@ -5,50 +5,43 @@
 
 package com.mytiki.l0_storage.features.latest.policy;
 
+import java.util.List;
+
 public class PolicyAORsp {
-    private String policy;
-    private String policySignature;
-    private String policyDate;
-    private String urnPrefix;
-    private Long expiresIn;
+    private String expires;
+    private String keyPrefix;
+    private List<String> compute = List.of("key", "file", "content-md5");
+    private PolicyAORspFields fields;
 
-    public String getPolicy() {
-        return policy;
+    public String getExpires() {
+        return expires;
     }
 
-    public void setPolicy(String policy) {
-        this.policy = policy;
+    public void setExpires(String expires) {
+        this.expires = expires;
     }
 
-    public String getPolicySignature() {
-        return policySignature;
+    public String getKeyPrefix() {
+        return keyPrefix;
     }
 
-    public void setPolicySignature(String policySignature) {
-        this.policySignature = policySignature;
+    public void setKeyPrefix(String keyPrefix) {
+        this.keyPrefix = keyPrefix;
     }
 
-    public String getPolicyDate() {
-        return policyDate;
+    public PolicyAORspFields getFields() {
+        return fields;
     }
 
-    public void setPolicyDate(String policyDate) {
-        this.policyDate = policyDate;
+    public void setFields(PolicyAORspFields fields) {
+        this.fields = fields;
     }
 
-    public String getUrnPrefix() {
-        return urnPrefix;
+    public List<String> getCompute() {
+        return compute;
     }
 
-    public void setUrnPrefix(String urnPrefix) {
-        this.urnPrefix = urnPrefix;
-    }
-
-    public Long getExpiresIn() {
-        return expiresIn;
-    }
-
-    public void setExpiresIn(Long expiresIn) {
-        this.expiresIn = expiresIn;
+    public void setCompute(List<String> compute) {
+        this.compute = compute;
     }
 }

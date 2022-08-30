@@ -11,10 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "POLICY")
 @RestController
@@ -35,7 +32,9 @@ public class PolicyController {
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
             @ApiResponse(responseCode = "417", description = "Expectation Failed", content = @Content)})
     @RequestMapping(method = RequestMethod.POST)
-    public PolicyAORsp postNew(@RequestBody PolicyAOReq body){
-        return service.request("test", body);
+    public PolicyAORsp postNew(
+            @RequestHeader(name = "x-api-id") String apiId,
+            @RequestBody PolicyAOReq body){
+        return service.request(apiId, body);
     }
 }
