@@ -5,6 +5,7 @@
 
 package com.mytiki.l0_storage.features.latest.api_id;
 
+import com.mytiki.l0_storage.utilities.JwtHelper;
 import com.mytiki.spring_rest_api.ApiConstants;
 import com.mytiki.spring_rest_api.ApiPage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,17 +25,20 @@ public class ApiIdController {
     public static final String PATH_KEY = "/key";
     public static final String PATH_NEW = "/new";
     private final ApiIdService service;
+    private final JwtHelper jwtHelper;
 
-    public ApiIdController(ApiIdService service) {
+    public ApiIdController(ApiIdService service, JwtHelper jwtHelper) {
         this.service = service;
+        this.jwtHelper = jwtHelper;
     }
 
     @Operation(summary = "Get all provisioned API Ids")
     @RequestMapping(method = RequestMethod.GET)
     public ApiPage<ApiIdAORsp> getAll(
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String bearer,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "100") int size) {
-        return service.all("test", page, size);
+        return service.all(jwtHelper.decode(bearer).getSubject(), page, size);
     }
 
     @Operation(summary = "Get an API Id's properties", responses = {

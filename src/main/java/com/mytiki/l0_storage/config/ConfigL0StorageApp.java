@@ -18,7 +18,8 @@ import java.util.TimeZone;
 @Import({
         ApiExceptionHandlerDefault.class,
         UtilitiesConfig.class,
-        ConfigFeatures.class
+        ConfigSecurity.class,
+        ConfigFeatures.class,
 })
 @EnableScheduling
 public class ConfigL0StorageApp {

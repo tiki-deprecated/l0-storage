@@ -23,4 +23,9 @@ public class UtilitiesConfig {
             @Value("${com.mytiki.l0_storage.wasabi.region}") String region){
         return new WasabiHelper(key, secret, bucket, region);
     }
+
+    @Bean
+    public JwtHelper jwtHelper(@Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuer){
+        return new JwtHelper(issuer);
+    }
 }
