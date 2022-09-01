@@ -46,8 +46,10 @@ public class ApiIdController {
                     schema = @Schema(implementation = ApiIdAORsp.class))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
     @RequestMapping(method = RequestMethod.GET, path = PATH_KEY + "/{api-id}")
-    public ApiIdAORsp getKey(@PathVariable(name = "api-id") String apiId){
-        return service.get(apiId);
+    public ApiIdAORsp getKey(
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String bearer,
+            @PathVariable(name = "api-id") String apiId){
+        return service.get(apiId, jwtHelper.decode(bearer).getSubject());
     }
 
     @Operation(summary = "Revoke an API Id (permanent)", responses = {
@@ -56,13 +58,16 @@ public class ApiIdController {
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @RequestMapping(method = RequestMethod.DELETE, path = PATH_KEY + "/{api-id}")
-    public ApiIdAORsp deleteKey(@PathVariable(name = "api-id") String apiId){
-        return service.revoke(apiId);
+    public ApiIdAORsp deleteKey(
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String bearer,
+            @PathVariable(name = "api-id") String apiId){
+        return service.revoke(apiId, jwtHelper.decode(bearer).getSubject());
     }
 
     @Operation(summary = "Request a new API Id")
     @RequestMapping(method = RequestMethod.POST, path = PATH_NEW)
-    public ApiIdAORsp postNew(){
-        return service.register("test");
+    public ApiIdAORsp postNew(
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String bearer){
+        return service.register(jwtHelper.decode(bearer).getSubject());
     }
 }

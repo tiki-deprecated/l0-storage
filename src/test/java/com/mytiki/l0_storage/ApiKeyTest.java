@@ -43,7 +43,8 @@ public class ApiKeyTest {
 
     @Test
     public void Test_Register_Success() {
-        ApiIdAORsp rsp = service.register("test");
+        String customerId = UUID.randomUUID().toString();
+        ApiIdAORsp rsp = service.register(customerId);
         Optional<ApiIdDO> found = repository.findById(UUID.fromString(rsp.getApiId()));
 
         assertTrue(found.isPresent());
@@ -57,8 +58,9 @@ public class ApiKeyTest {
 
     @Test
     public void Test_Revoke_Success() {
-        ApiIdAORsp register = service.register("test");
-        ApiIdAORsp rsp = service.revoke(register.getApiId());
+        String customerId = UUID.randomUUID().toString();
+        ApiIdAORsp register = service.register(customerId);
+        ApiIdAORsp rsp = service.revoke(register.getApiId(), customerId);
         Optional<ApiIdDO> found = repository.findById(UUID.fromString(rsp.getApiId()));
 
         assertFalse(rsp.getValid());
@@ -69,14 +71,15 @@ public class ApiKeyTest {
     @Test
     public void Test_Revoke_NotFound() {
         ApiException ex = assertThrows(ApiException.class,
-                () -> service.revoke(UUID.randomUUID().toString()));
+                () -> service.revoke(UUID.randomUUID().toString(), UUID.randomUUID().toString()));
         assertEquals(ex.getHttpStatus(), HttpStatus.NOT_FOUND);
     }
 
     @Test
     public void Test_Get_Success() {
-        ApiIdAORsp register = service.register("test");
-        ApiIdAORsp get = service.get(register.getApiId());
+        String customerId = UUID.randomUUID().toString();
+        ApiIdAORsp register = service.register(customerId);
+        ApiIdAORsp get = service.get(register.getApiId(), customerId);
 
         assertEquals(register.getApiId(), get.getApiId());
         assertNotNull(get.getValid());
@@ -87,7 +90,7 @@ public class ApiKeyTest {
     @Test
     public void Test_Get_NotFound() {
         ApiException ex = assertThrows(ApiException.class,
-                () -> service.get(UUID.randomUUID().toString()));
+                () -> service.get(UUID.randomUUID().toString(), UUID.randomUUID().toString()));
         assertEquals(ex.getHttpStatus(), HttpStatus.NOT_FOUND);
     }
 

@@ -43,9 +43,9 @@ public class ApiIdService {
         return toRsp(keyDO);
     }
 
-    public ApiIdAORsp revoke(String apiId) {
+    public ApiIdAORsp revoke(String apiId, String customerId) {
         Optional<ApiIdDO> exists = repository.findById(UUID.fromString(apiId));
-        if(exists.isPresent()){
+        if(exists.isPresent() && exists.get().getCustomerId().equals(customerId)){
             ApiIdDO revoked = exists.get();
             revoked.setValid(false);
             revoked.setModified(ZonedDateTime.now(ZoneOffset.UTC));
@@ -58,11 +58,11 @@ public class ApiIdService {
                     .build();
     }
 
-    public ApiIdAORsp get(String apiId) {
+    public ApiIdAORsp get(String apiId, String customerId) {
         Optional<ApiIdDO> exists = find(apiId);
-        if(exists.isPresent()){
+        if(exists.isPresent() && exists.get().getCustomerId().equals(customerId))
             return toRsp(exists.get());
-        }else
+        else
             throw new ApiExceptionBuilder(HttpStatus.NOT_FOUND)
                     .message("Api Id Not Found")
                     .help("Try GET /api/latest/api-id/")
