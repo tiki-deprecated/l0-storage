@@ -5,18 +5,39 @@
 
 package com.mytiki.l0_storage;
 
-import com.mytiki.l0_storage.utilities.SHAHelper;
+import com.mytiki.l0_storage.main.l0StorageApp;
+import com.mytiki.l0_storage.utilities.SHAFacade;
+import com.mytiki.l0_storage.utilities.wasabi.WasabiFacade;
+import com.mytiki.l0_storage.utilities.wasabi.WasabiVersionsResult;
 import org.apache.commons.codec.binary.Hex;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class WasabiHelperTest {
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        classes = {l0StorageApp.class}
+)
+@ActiveProfiles(profiles = {"test", "local"})
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class WasabiTest {
+
+    @Autowired
+    private WasabiFacade wasabiFacade;
 
     @Test
     public void Test_Policy_Signature_Pair_Success() throws NoSuchAlgorithmException, InvalidKeyException {
@@ -41,12 +62,20 @@ public class WasabiHelperTest {
         assertEquals(b64p, "eyAiZXhwaXJhdGlvbiI6ICIyMDE1LTEyLTMwVDEyOjAwOjAwLjAwMFoiLA0KICAiY29uZGl0aW9ucyI6IFsNCiAgICB7ImJ1Y2tldCI6ICJzaWd2NGV4YW1wbGVidWNrZXQifSwNCiAgICBbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAidXNlci91c2VyMS8iXSwNCiAgICB7ImFjbCI6ICJwdWJsaWMtcmVhZCJ9LA0KICAgIHsic3VjY2Vzc19hY3Rpb25fcmVkaXJlY3QiOiAiaHR0cDovL3NpZ3Y0ZXhhbXBsZWJ1Y2tldC5zMy5hbWF6b25hd3MuY29tL3N1Y2Nlc3NmdWxfdXBsb2FkLmh0bWwifSwNCiAgICBbInN0YXJ0cy13aXRoIiwgIiRDb250ZW50LVR5cGUiLCAiaW1hZ2UvIl0sDQogICAgeyJ4LWFtei1tZXRhLXV1aWQiOiAiMTQzNjUxMjM2NTEyNzQifSwNCiAgICB7IngtYW16LXNlcnZlci1zaWRlLWVuY3J5cHRpb24iOiAiQUVTMjU2In0sDQogICAgWyJzdGFydHMtd2l0aCIsICIkeC1hbXotbWV0YS10YWciLCAiIl0sDQoNCiAgICB7IngtYW16LWNyZWRlbnRpYWwiOiAiQUtJQUlPU0ZPRE5ON0VYQU1QTEUvMjAxNTEyMjkvdXMtZWFzdC0xL3MzL2F3czRfcmVxdWVzdCJ9LA0KICAgIHsieC1hbXotYWxnb3JpdGhtIjogIkFXUzQtSE1BQy1TSEEyNTYifSwNCiAgICB7IngtYW16LWRhdGUiOiAiMjAxNTEyMjlUMDAwMDAwWiIgfQ0KICBdDQp9");
 
         byte[] secret = ("AWS4" + "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY").getBytes(StandardCharsets.UTF_8);
-        byte[] dateKey = SHAHelper.hmacSha256("20151229", secret);
-        byte[] regionKey = SHAHelper.hmacSha256("us-east-1", dateKey);
-        byte[] serviceKey = SHAHelper.hmacSha256("s3", regionKey);
-        byte[] signingKey = SHAHelper.hmacSha256("aws4_request", serviceKey);
+        byte[] dateKey = SHAFacade.hmacSha256("20151229", secret);
+        byte[] regionKey = SHAFacade.hmacSha256("us-east-1", dateKey);
+        byte[] serviceKey = SHAFacade.hmacSha256("s3", regionKey);
+        byte[] signingKey = SHAFacade.hmacSha256("aws4_request", serviceKey);
 
-        String sig =  Hex.encodeHexString(SHAHelper.hmacSha256(b64p, signingKey));
+        String sig =  Hex.encodeHexString(SHAFacade.hmacSha256(b64p, signingKey));
         assertEquals(sig, "8afdbf4008c03f22c2cd3cdb72e4afbb1f6a588f3255ac628749a66d7f09699e");
+    }
+
+    @Test
+    public void Test_List_Versions_Success() throws URISyntaxException {
+        String prefix = UUID.randomUUID().toString();
+        WasabiVersionsResult res = wasabiFacade.listObjects(prefix, null, null);
+        assertEquals(wasabiFacade.wasabiBucket, res.getName());
+        assertEquals(prefix  + "/", res.getPrefix());
     }
 }

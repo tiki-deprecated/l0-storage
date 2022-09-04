@@ -22,7 +22,7 @@ import java.util.TimeZone;
         ConfigFeatures.class,
 })
 @EnableScheduling
-public class ConfigL0StorageApp {
+public class ConfigApp {
     @PostConstruct
     void starter(){
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));

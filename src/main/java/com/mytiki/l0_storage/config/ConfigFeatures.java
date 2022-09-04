@@ -7,10 +7,12 @@ package com.mytiki.l0_storage.config;
 
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdConfig;
 import com.mytiki.l0_storage.features.latest.policy.PolicyConfig;
+import com.mytiki.l0_storage.features.latest.usage.UsageConfig;
 import org.springframework.context.annotation.Import;
 
 @Import({
         ApiIdConfig.class,
-        PolicyConfig.class
+        PolicyConfig.class,
+        UsageConfig.class
 })
 public class ConfigFeatures {}

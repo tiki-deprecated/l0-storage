@@ -5,7 +5,6 @@
 
 package com.mytiki.l0_storage.features.latest.api_id;
 
-import com.mytiki.l0_storage.utilities.JwtHelper;
 import com.mytiki.spring_rest_api.ApiConstants;
 import com.mytiki.spring_rest_api.ApiPage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,8 +12,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "API ID")
@@ -25,20 +24,18 @@ public class ApiIdController {
     public static final String PATH_KEY = "/key";
     public static final String PATH_NEW = "/new";
     private final ApiIdService service;
-    private final JwtHelper jwtHelper;
 
-    public ApiIdController(ApiIdService service, JwtHelper jwtHelper) {
+    public ApiIdController(ApiIdService service) {
         this.service = service;
-        this.jwtHelper = jwtHelper;
     }
 
     @Operation(summary = "Get all provisioned API Ids")
     @RequestMapping(method = RequestMethod.GET)
     public ApiPage<ApiIdAORsp> getAll(
-            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String bearer,
+            Authentication authentication,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "100") int size) {
-        return service.all(jwtHelper.decode(bearer).getSubject(), page, size);
+        return service.all(authentication.getName(), page, size);
     }
 
     @Operation(summary = "Get an API Id's properties", responses = {
@@ -47,9 +44,9 @@ public class ApiIdController {
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
     @RequestMapping(method = RequestMethod.GET, path = PATH_KEY + "/{api-id}")
     public ApiIdAORsp getKey(
-            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String bearer,
+            Authentication authentication,
             @PathVariable(name = "api-id") String apiId){
-        return service.get(apiId, jwtHelper.decode(bearer).getSubject());
+        return service.get(apiId, authentication.getName());
     }
 
     @Operation(summary = "Revoke an API Id (permanent)", responses = {
@@ -59,15 +56,14 @@ public class ApiIdController {
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @RequestMapping(method = RequestMethod.DELETE, path = PATH_KEY + "/{api-id}")
     public ApiIdAORsp deleteKey(
-            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String bearer,
+            Authentication authentication,
             @PathVariable(name = "api-id") String apiId){
-        return service.revoke(apiId, jwtHelper.decode(bearer).getSubject());
+        return service.revoke(apiId, authentication.getName());
     }
 
     @Operation(summary = "Request a new API Id")
     @RequestMapping(method = RequestMethod.POST, path = PATH_NEW)
-    public ApiIdAORsp postNew(
-            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String bearer){
-        return service.register(jwtHelper.decode(bearer).getSubject());
+    public ApiIdAORsp postNew(Authentication authentication){
+        return service.register(authentication.getName());
     }
 }

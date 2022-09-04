@@ -9,7 +9,7 @@ import com.mytiki.l0_storage.features.latest.api_id.ApiIdAORsp;
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdService;
 import com.mytiki.l0_storage.features.latest.policy.*;
 import com.mytiki.l0_storage.main.l0StorageApp;
-import com.mytiki.l0_storage.utilities.WasabiHelper;
+import com.mytiki.l0_storage.utilities.wasabi.WasabiFacade;
 import com.mytiki.spring_rest_api.ApiException;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.crypto.CryptoException;
@@ -55,7 +55,7 @@ public class PolicyTest {
     private PolicyRepository repository;
 
     @Autowired
-    private WasabiHelper wasabiHelper;
+    private WasabiFacade wasabiHelper;
 
     @Test
     public void Test_Request_Success() throws

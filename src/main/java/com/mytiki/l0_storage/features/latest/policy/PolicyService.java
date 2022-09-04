@@ -7,9 +7,9 @@ package com.mytiki.l0_storage.features.latest.policy;
 
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdDO;
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdService;
-import com.mytiki.l0_storage.utilities.RSAHelper;
-import com.mytiki.l0_storage.utilities.SHAHelper;
-import com.mytiki.l0_storage.utilities.WasabiHelper;
+import com.mytiki.l0_storage.utilities.RSAFacade;
+import com.mytiki.l0_storage.utilities.SHAFacade;
+import com.mytiki.l0_storage.utilities.wasabi.WasabiFacade;
 import com.mytiki.spring_rest_api.ApiExceptionBuilder;
 import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;
@@ -35,35 +35,35 @@ public class PolicyService {
 
     private final PolicyRepository repository;
     private final ApiIdService apiIdService;
-    private final WasabiHelper wasabiHelper;
+    private final WasabiFacade wasabiFacade;
 
-    public PolicyService(PolicyRepository repository, ApiIdService apiIdService, WasabiHelper wasabiHelper) {
+    public PolicyService(PolicyRepository repository, ApiIdService apiIdService, WasabiFacade wasabiFacade) {
         this.repository = repository;
         this.apiIdService = apiIdService;
-        this.wasabiHelper = wasabiHelper;
+        this.wasabiFacade = wasabiFacade;
     }
 
     public PolicyAORsp request(String apiId, PolicyAOReq req){
         String customerId = guardForApiId(apiId);
         guardForSignature(req);
         try {
-            String hashedCustomerId = Hex.encodeHexString(SHAHelper.sha3_256(customerId));
-            String hashedPubKey = Hex.encodeHexString(SHAHelper.sha3_256(req.getPubKey()));
-            String urnPrefix = hashedCustomerId + "/" + hashedPubKey;
+            String hashedCustomerId = Hex.encodeHexString(SHAFacade.sha3_256(customerId));
+            String hashedPubKey = Hex.encodeHexString(SHAFacade.sha3_256(req.getPubKey()));
+            String urnPrefix = hashedCustomerId + "/" + hashedPubKey + "/";
 
             ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC).withNano(0);
             String date = now.format(DateTimeFormatter.BASIC_ISO_DATE).replace("Z", "");
             String expires = now.plusHours(POLICY_EXPIRATION_HOURS).format(DateTimeFormatter.ISO_INSTANT);
             String lockUntil = now.plusMinutes(OBJECT_LOCK_MINUTES).format(DateTimeFormatter.ISO_INSTANT);
 
-            String policy = wasabiHelper.buildPolicy(urnPrefix, date, expires, lockUntil);
-            String signature = wasabiHelper.signPolicy(policy, date);
+            String policy = wasabiFacade.buildPolicy(urnPrefix, date, expires, lockUntil);
+            String signature = wasabiFacade.signV4(policy, date);
 
             logPolicy(apiId, urnPrefix);
 
             PolicyAORspFields fields = new PolicyAORspFields();
             fields.setPolicy(policy);
-            fields.setxAmzCredential(wasabiHelper.buildCredential(date));
+            fields.setxAmzCredential(wasabiFacade.buildCredential(date));
             fields.setxAmzDate(now.format(DateTimeFormatter.ISO_INSTANT));
             fields.setxAmzObjectLockRetainUntilDate(lockUntil);
             fields.setxAmzSignature(signature);
@@ -98,8 +98,8 @@ public class PolicyService {
 
     private void guardForSignature(PolicyAOReq req){
         try{
-            RSAPublicKey publicKey = RSAHelper.decodePublicKey(req.getPubKey());
-            boolean isValid = RSAHelper.verify(publicKey, req.getStringToSign(), req.getSignature());
+            RSAPublicKey publicKey = RSAFacade.decodePublicKey(req.getPubKey());
+            boolean isValid = RSAFacade.verify(publicKey, req.getStringToSign(), req.getSignature());
             if(!isValid)
                 throw new ApiExceptionBuilder(HttpStatus.BAD_REQUEST)
                         .message("Failed to validate key/signature paid")

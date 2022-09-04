@@ -12,8 +12,7 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class SHAHelper {
-
+public class SHAFacade {
     public static byte[] sha3_256(String input) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA3-256");
         return md.digest(input.getBytes(StandardCharsets.UTF_8));

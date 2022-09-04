@@ -15,8 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-public class RSAHelper {
-
+public class RSAFacade {
     public static RSAPublicKey decodePublicKey(String publicKey) throws IOException {
         try (ASN1InputStream inputStream = new ASN1InputStream(Base64.getDecoder().decode(publicKey))) {
             ASN1Sequence topLevelSeq = ASN1Sequence.getInstance(inputStream.readObject());
