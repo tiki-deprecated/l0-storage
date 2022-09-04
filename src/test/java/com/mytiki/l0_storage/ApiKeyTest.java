@@ -9,7 +9,7 @@ import com.mytiki.l0_storage.features.latest.api_id.ApiIdAORsp;
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdDO;
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdRepository;
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdService;
-import com.mytiki.l0_storage.main.l0StorageApp;
+import com.mytiki.l0_storage.main.App;
 import com.mytiki.spring_rest_api.ApiException;
 import com.mytiki.spring_rest_api.ApiPage;
 import org.junit.jupiter.api.MethodOrderer;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = {l0StorageApp.class}
+        classes = {App.class}
 )
 @ActiveProfiles(profiles = {"test", "local"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

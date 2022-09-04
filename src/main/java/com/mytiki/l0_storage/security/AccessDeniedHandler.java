@@ -3,7 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-package com.mytiki.l0_storage.utilities;
+package com.mytiki.l0_storage.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mytiki.spring_rest_api.ApiError;

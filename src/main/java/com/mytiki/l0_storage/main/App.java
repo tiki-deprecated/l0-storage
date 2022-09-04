@@ -5,7 +5,6 @@
 
 package com.mytiki.l0_storage.main;
 
-import com.mytiki.l0_storage.config.ConfigApp;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -31,12 +30,10 @@ import org.springframework.context.annotation.Import;
                 description = "javadocs"
         )
 )
-@Import({
-        ConfigApp.class
-})
+@Import(AppConfig.class)
 @SpringBootApplication
-public class l0StorageApp {
+public class App {
     public static void main(final String... args) {
-        SpringApplication.run(l0StorageApp.class, args);
+        SpringApplication.run(App.class, args);
     }
 }

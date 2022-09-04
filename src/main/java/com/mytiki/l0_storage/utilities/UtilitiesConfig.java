@@ -13,11 +13,6 @@ import org.springframework.context.annotation.Bean;
 public class UtilitiesConfig {
 
     @Bean
-    public HealthController healthController(){
-        return new HealthController();
-    }
-
-    @Bean
     public WasabiFacade wasabiFacade(
             @Value("${com.mytiki.l0_storage.wasabi.bucket}") String bucket,
             @Value("${com.mytiki.l0_storage.wasabi.accountKey}") String key,

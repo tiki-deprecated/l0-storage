@@ -5,7 +5,7 @@
 
 package com.mytiki.l0_storage;
 
-import com.mytiki.l0_storage.main.l0StorageApp;
+import com.mytiki.l0_storage.main.App;
 import com.mytiki.l0_storage.utilities.SHAFacade;
 import com.mytiki.l0_storage.utilities.WasabiFacade;
 import org.apache.commons.codec.binary.Hex;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = {l0StorageApp.class}
+        classes = {App.class}
 )
 @ActiveProfiles(profiles = {"test", "local"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

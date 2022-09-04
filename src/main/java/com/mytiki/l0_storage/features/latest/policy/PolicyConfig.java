@@ -5,9 +5,10 @@
 
 package com.mytiki.l0_storage.features.latest.policy;
 
-import com.mytiki.l0_storage.features.latest.api_id.ApiIdService;
+import com.mytiki.l0_storage.features.latest.usage.UsageController;
+import com.mytiki.l0_storage.features.latest.usage.UsageRepository;
+import com.mytiki.l0_storage.features.latest.usage.UsageService;
 import com.mytiki.l0_storage.utilities.Constants;
-import com.mytiki.l0_storage.utilities.WasabiFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -19,15 +20,12 @@ public class PolicyConfig {
     public static final String PACKAGE_PATH = Constants.PACKAGE_FEATURES_LATEST_DOT_PATH + ".policy";
 
     @Bean
-    public PolicyService policyService(
-            @Autowired PolicyRepository repository,
-            @Autowired ApiIdService apiIdService,
-            @Autowired WasabiFacade wasabiFacade){
-        return new PolicyService(repository, apiIdService, wasabiFacade);
+    public UsageService usageService(@Autowired UsageRepository repository){
+        return new UsageService(repository);
     }
 
     @Bean
-    public PolicyController policyController(@Autowired PolicyService service){
-        return new PolicyController(service);
+    public UsageController usageController(@Autowired UsageService service){
+        return new UsageController(service);
     }
 }

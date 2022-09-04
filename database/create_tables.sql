@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS policy(
 CREATE TABLE IF NOT EXISTS usage(
     usage_id BIGSERIAL NOT NULL,
     urn_prefix TEXT NOT NULL,
-    block_count BIGINT,
+    size_bytes BIGINT,
     created_utc TIMESTAMP WITH TIME ZONE NOT NULL
 );
 CREATE INDEX idx_usage_log_urn_created ON usage (urn_prefix, created_utc);
