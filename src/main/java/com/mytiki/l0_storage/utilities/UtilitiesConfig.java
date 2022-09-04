@@ -5,7 +5,6 @@
 
 package com.mytiki.l0_storage.utilities;
 
-import com.mytiki.l0_storage.utilities.wasabi.WasabiFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;

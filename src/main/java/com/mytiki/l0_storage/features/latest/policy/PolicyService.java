@@ -9,7 +9,7 @@ import com.mytiki.l0_storage.features.latest.api_id.ApiIdDO;
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdService;
 import com.mytiki.l0_storage.utilities.RSAFacade;
 import com.mytiki.l0_storage.utilities.SHAFacade;
-import com.mytiki.l0_storage.utilities.wasabi.WasabiFacade;
+import com.mytiki.l0_storage.utilities.WasabiFacade;
 import com.mytiki.spring_rest_api.ApiExceptionBuilder;
 import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;

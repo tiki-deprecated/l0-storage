@@ -7,7 +7,7 @@ package com.mytiki.l0_storage.features.latest.policy;
 
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdService;
 import com.mytiki.l0_storage.utilities.Constants;
-import com.mytiki.l0_storage.utilities.wasabi.WasabiFacade;
+import com.mytiki.l0_storage.utilities.WasabiFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;

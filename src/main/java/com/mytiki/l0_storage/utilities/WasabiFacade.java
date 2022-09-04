@@ -3,15 +3,11 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-package com.mytiki.l0_storage.utilities.wasabi;
+package com.mytiki.l0_storage.utilities;
 
-import com.mytiki.l0_storage.utilities.SHAFacade;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.http.client.utils.URIBuilder;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -68,23 +64,5 @@ public class WasabiFacade {
 
     public String buildCredential(String date){
         return wasabiKey + "/" + date + "/" + wasabiRegion + "/s3/awsaws4_request";
-    }
-
-    public WasabiVersionsResult listObjects(
-            String prefix,
-            String keyMarker,
-            String versionMarker)
-            throws URISyntaxException {
-        URI uri = new URIBuilder()
-                .setScheme("https")
-                .setHost(wasabiBucket + ".s3." + wasabiRegion + ".wasabisys.com")
-                .setPath("/")
-                .addParameter("versions", null)
-                .addParameter("max-keys", "1000")
-                .addParameter("prefix", prefix + "/")
-                .addParameter("key-marker", keyMarker)
-                .addParameter("version-id-marker", versionMarker)
-                .build();
-        return restTemplate.getForObject(uri, WasabiVersionsResult.class);
     }
 }

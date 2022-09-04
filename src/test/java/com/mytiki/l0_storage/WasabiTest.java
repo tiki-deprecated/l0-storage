@@ -7,8 +7,7 @@ package com.mytiki.l0_storage;
 
 import com.mytiki.l0_storage.main.l0StorageApp;
 import com.mytiki.l0_storage.utilities.SHAFacade;
-import com.mytiki.l0_storage.utilities.wasabi.WasabiFacade;
-import com.mytiki.l0_storage.utilities.wasabi.WasabiVersionsResult;
+import com.mytiki.l0_storage.utilities.WasabiFacade;
 import org.apache.commons.codec.binary.Hex;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -18,12 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -71,11 +68,4 @@ public class WasabiTest {
         assertEquals(sig, "8afdbf4008c03f22c2cd3cdb72e4afbb1f6a588f3255ac628749a66d7f09699e");
     }
 
-    @Test
-    public void Test_List_Versions_Success() throws URISyntaxException {
-        String prefix = UUID.randomUUID().toString();
-        WasabiVersionsResult res = wasabiFacade.listObjects(prefix, null, null);
-        assertEquals(wasabiFacade.wasabiBucket, res.getName());
-        assertEquals(prefix  + "/", res.getPrefix());
-    }
 }
