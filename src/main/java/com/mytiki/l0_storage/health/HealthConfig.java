@@ -8,10 +8,8 @@ package com.mytiki.l0_storage.health;
 import org.springframework.context.annotation.Bean;
 
 public class HealthConfig {
-
     @Bean
     public HealthController healthController(){
         return new HealthController();
     }
-
 }

@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = ApiConstants.HEALTH_ROUTE)
 public class HealthController {
-
     @ApiResponse(
             responseCode = "200",
             content = @Content(

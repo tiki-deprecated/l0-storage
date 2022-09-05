@@ -34,7 +34,7 @@ public class UsageController {
             @ApiResponse(responseCode = "204", description = "No Content", content = @Content),
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)})
     @RequestMapping(method = RequestMethod.POST)
-    public void postNew(@RequestBody UsageAOReq body){
+    public void post(@RequestBody UsageAOReq body){
         service.log(body);
     }
 }

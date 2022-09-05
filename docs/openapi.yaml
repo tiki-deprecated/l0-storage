@@ -12,6 +12,23 @@ externalDocs:
 servers:
 - url: coming soon
 paths:
+  /api/latest/usage:
+    post:
+      tags:
+      - USAGE
+      summary: Submit a usage report
+      operationId: post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsageAOReq'
+        required: true
+      responses:
+        "204":
+          description: No Content
+        "403":
+          description: Forbidden
   /api/latest/policy:
     post:
       tags:
@@ -141,6 +158,14 @@ paths:
           description: Not Found
 components:
   schemas:
+    UsageAOReq:
+      type: object
+      properties:
+        path:
+          type: string
+        sizeBytes:
+          type: integer
+          format: int64
     PolicyAORsp:
       type: object
       properties:
