@@ -53,7 +53,7 @@ jobs:
           sudo apt-get install --yes postgresql-client
 
       - name: Create Tables
-        run: psql -h localhost -d l0_storage -U tester -f l0_storage/database/create_tables.sql
+        run: psql -h localhost -d l0_storage -U tester -f l0-storage/database/create_tables.sql
         env:
           PGPASSWORD: ${{ secrets.POSTGRES_TEST_PW }}
 
