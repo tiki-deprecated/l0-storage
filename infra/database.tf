@@ -13,7 +13,7 @@ resource "digitalocean_database_cluster" "db-cluster-l0-storage" {
 
 resource "digitalocean_database_db" "db-l0-storage" {
   cluster_id = digitalocean_database_cluster.db-cluster-l0-storage.id
-  name       = "l0-storage"
+  name       = "l0_storage"
 }
 
 resource "digitalocean_database_firewall" "db-cluster-l0-storage-fw" {
