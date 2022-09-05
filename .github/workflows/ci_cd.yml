@@ -32,11 +32,12 @@ jobs:
         with:
           path: l0-storage
 
-      - name: Checkout Common
+      - name: Checkout spring-rest-api
         uses: actions/checkout@v3
         with:
-          repository: tiki/common
-          path: common
+          repository: tiki/spring-rest-api
+          path: spring-rest-api
+          ref: '1.0.0'
 
       - name: Set up JDK 11
         uses: actions/setup-java@v3
@@ -53,13 +54,13 @@ jobs:
           sudo apt-get install --yes postgresql-client
 
       - name: Create Tables
-        run: psql -h localhost -d l0_storage -U tester -f l0_storage/database/create_tables.sql
+        run: psql -h localhost -d l0_storage -U tester -f l0-storage/database/create_tables.sql
         env:
           PGPASSWORD: ${{ secrets.POSTGRES_TEST_PW }}
 
-      - name: Maven Install Common
+      - name: Maven Install spring-rest-api
         run: |
-          cd common
+          cd spring-rest-api
           mvn install
 
       - name: Maven Package L0 Storage
