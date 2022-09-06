@@ -12,7 +12,6 @@ import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.signers.RSADigestSigner;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class RSAFacade {
@@ -29,13 +28,12 @@ public class RSAFacade {
         }
     }
 
-    public static boolean verify(RSAPublicKey publicKey, String plaintext, String signature){
-        byte[] messageBytes = plaintext.getBytes(StandardCharsets.UTF_8);
+    public static boolean verify(RSAPublicKey publicKey, byte[] message, String signature){
         RSADigestSigner signer = new RSADigestSigner(new SHA256Digest());
         RSAKeyParameters keyParameters =
                 new RSAKeyParameters(false, publicKey.getModulus(), publicKey.getPublicExponent());
         signer.init(false, keyParameters);
-        signer.update(messageBytes, 0, messageBytes.length);
+        signer.update(message, 0, message.length);
         return signer.verifySignature(Base64.getDecoder().decode(signature));
     }
 }

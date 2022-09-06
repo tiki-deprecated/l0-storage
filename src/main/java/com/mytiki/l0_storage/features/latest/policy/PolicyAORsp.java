@@ -10,6 +10,7 @@ import java.util.List;
 public class PolicyAORsp {
     private String expires;
     private String keyPrefix;
+    private long maxBytes = 1048576;
     private List<String> compute = List.of("key", "file", "content-md5");
     private PolicyAORspFields fields;
 
@@ -29,12 +30,12 @@ public class PolicyAORsp {
         this.keyPrefix = keyPrefix;
     }
 
-    public PolicyAORspFields getFields() {
-        return fields;
+    public long getMaxBytes() {
+        return maxBytes;
     }
 
-    public void setFields(PolicyAORspFields fields) {
-        this.fields = fields;
+    public void setMaxBytes(long maxBytes) {
+        this.maxBytes = maxBytes;
     }
 
     public List<String> getCompute() {
@@ -43,5 +44,13 @@ public class PolicyAORsp {
 
     public void setCompute(List<String> compute) {
         this.compute = compute;
+    }
+
+    public PolicyAORspFields getFields() {
+        return fields;
+    }
+
+    public void setFields(PolicyAORspFields fields) {
+        this.fields = fields;
     }
 }

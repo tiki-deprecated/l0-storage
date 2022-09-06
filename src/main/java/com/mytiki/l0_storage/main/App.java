@@ -5,7 +5,6 @@
 
 package com.mytiki.l0_storage.main;
 
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
@@ -18,17 +17,13 @@ import org.springframework.context.annotation.Import;
         info = @Info(
                 title = "L0 Storage",
                 description = "Long term immutable block storage.",
-                version = "0.0.1",
+                version = "0.0.2",
                 license = @License(
                         name = "MIT",
                         url = "https://github.com/tiki/l0-storage/blob/main/LICENSE"
                 )
         ),
-        servers = @Server(url = "coming soon"),
-        externalDocs = @ExternalDocumentation(
-                url = "coming soon",
-                description = "javadocs"
-        )
+        servers = @Server(url = "https://storage.l0.mytiki.com")
 )
 @Import(AppConfig.class)
 @SpringBootApplication

@@ -6,7 +6,6 @@
 package com.mytiki.l0_storage.utilities;
 
 import org.apache.commons.codec.binary.Hex;
-import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -14,8 +13,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class WasabiFacade {
-    private final RestTemplate restTemplate;
-
     private final String wasabiKey;
     private final String wasabiSecret;
     public final String wasabiBucket;
@@ -25,13 +22,11 @@ public class WasabiFacade {
             String wasabiKey,
             String wasabiSecret,
             String wasabiBucket,
-            String wasabiRegion,
-            RestTemplate restTemplate) {
+            String wasabiRegion) {
         this.wasabiKey = wasabiKey;
         this.wasabiSecret = wasabiSecret;
         this.wasabiBucket = wasabiBucket;
         this.wasabiRegion = wasabiRegion;
-        this.restTemplate = restTemplate;
     }
 
     public String buildPolicy(String urnPrefix, String date, String expires, String lockUntil){
