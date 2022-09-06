@@ -10,6 +10,7 @@ import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.signers.RSADigestSigner;
+import org.springframework.security.crypto.codec.Utf8;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -28,12 +29,13 @@ public class RSAFacade {
         }
     }
 
-    public static boolean verify(RSAPublicKey publicKey, byte[] message, String signature){
+    public static boolean verify(RSAPublicKey publicKey, String message, String signature){
+        byte[] messageBytes = Utf8.encode(message);
         RSADigestSigner signer = new RSADigestSigner(new SHA256Digest());
         RSAKeyParameters keyParameters =
                 new RSAKeyParameters(false, publicKey.getModulus(), publicKey.getPublicExponent());
         signer.init(false, keyParameters);
-        signer.update(message, 0, message.length);
+        signer.update(messageBytes, 0, messageBytes.length);
         return signer.verifySignature(Base64.getDecoder().decode(signature));
     }
 }
