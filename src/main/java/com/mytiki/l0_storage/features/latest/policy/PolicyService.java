@@ -24,7 +24,6 @@ import java.security.NoSuchAlgorithmException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -101,7 +100,7 @@ public class PolicyService {
         try{
             RSAPublicKey publicKey = RSAFacade.decodePublicKey(req.getPubKey());
             boolean isValid = RSAFacade.verify(
-                    publicKey, Base64.getDecoder().decode(req.getStringToSign()), req.getSignature());
+                    publicKey, req.getStringToSign(), req.getSignature());
             if(!isValid)
                 throw new ApiExceptionBuilder(HttpStatus.BAD_REQUEST)
                         .message("Failed to validate key/signature paid")
