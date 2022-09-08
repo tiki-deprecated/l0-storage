@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.ZonedDateTime;
 import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,6 +67,15 @@ public class WasabiTest {
 
         String sig =  Hex.encodeHexString(SHAFacade.hmacSha256(b64p, signingKey));
         assertEquals(sig, "8afdbf4008c03f22c2cd3cdb72e4afbb1f6a588f3255ac628749a66d7f09699e");
+    }
+
+    @Test
+    public void Test_FormatDate_Success() throws NoSuchAlgorithmException, InvalidKeyException {
+        ZonedDateTime zdt = ZonedDateTime.parse("2022-09-08T06:58:29.696103Z");
+        String dateTime = wasabiFacade.formatDateTime(zdt);
+        String date = wasabiFacade.formatDate(zdt);
+        assertEquals("20220908T065829Z", dateTime);
+        assertEquals("20220908", date);
     }
 
 }

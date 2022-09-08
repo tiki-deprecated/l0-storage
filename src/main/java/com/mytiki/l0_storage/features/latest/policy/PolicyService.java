@@ -52,19 +52,17 @@ public class PolicyService {
             String urnPrefix = hashedCustomerId + "/" + hashedPubKey + "/";
 
             ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC).withNano(0);
-            String date = now.format(DateTimeFormatter.BASIC_ISO_DATE).replace("Z", "");
             String expires = now.plusHours(POLICY_EXPIRATION_HOURS).format(DateTimeFormatter.ISO_INSTANT);
             String lockUntil = now.plusMinutes(OBJECT_LOCK_MINUTES).format(DateTimeFormatter.ISO_INSTANT);
-
-            String policy = wasabiFacade.buildPolicy(urnPrefix, date, expires, lockUntil);
-            String signature = wasabiFacade.signV4(policy, date);
+            String policy = wasabiFacade.buildPolicy(urnPrefix, now, expires, lockUntil);
+            String signature = wasabiFacade.signV4(policy, now);
 
             logPolicy(apiId, urnPrefix);
 
             PolicyAORspFields fields = new PolicyAORspFields();
             fields.setPolicy(policy);
-            fields.setxAmzCredential(wasabiFacade.buildCredential(date));
-            fields.setxAmzDate(now.format(DateTimeFormatter.ISO_INSTANT));
+            fields.setxAmzCredential(wasabiFacade.buildCredential(now));
+            fields.setxAmzDate(wasabiFacade.formatDateTime(now));
             fields.setxAmzObjectLockRetainUntilDate(lockUntil);
             fields.setxAmzSignature(signature);
 
