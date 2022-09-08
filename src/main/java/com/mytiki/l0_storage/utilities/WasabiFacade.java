@@ -58,6 +58,6 @@ public class WasabiFacade {
     }
 
     public String buildCredential(String date){
-        return wasabiKey + "/" + date + "/" + wasabiRegion + "/s3/awsaws4_request";
+        return wasabiKey + "/" + date + "/" + wasabiRegion + "/s3/aws4_request";
     }
 }
