@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Import;
         info = @Info(
                 title = "L0 Storage",
                 description = "Long term immutable block storage.",
-                version = "0.0.4",
+                version = "0.0.5",
                 license = @License(
                         name = "MIT",
                         url = "https://github.com/tiki/l0-storage/blob/main/LICENSE"
