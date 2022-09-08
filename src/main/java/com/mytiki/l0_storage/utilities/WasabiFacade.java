@@ -62,7 +62,7 @@ public class WasabiFacade {
                 "    [\"starts-with\", \"$key\", \"" + urnPrefix + "\"],\n" +
                 "    {\"x-amz-credential\": \"" + buildCredential(dt) + "\"},\n" +
                 "    {\"x-amz-algorithm\": \"AWS4-HMAC-SHA256\"},\n" +
-                "    {\"x-amz-date\": \"" + dt + "\"},\n" +
+                "    {\"x-amz-date\": \"" + formatDateTime(dt) + "\"},\n" +
                 "    {\"content-type\": \"application/json\"},\n" +
                 "    [\"content-length-range\", 100, 1048576],\n" +
                 "    [\"starts-with\", \"$x-amz-object-lock-mode\", \"GOVERNANCE\"], \n" +
