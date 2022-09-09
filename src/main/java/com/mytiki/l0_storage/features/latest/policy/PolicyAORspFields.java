@@ -6,11 +6,12 @@
 package com.mytiki.l0_storage.features.latest.policy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.http.MediaType;
 
 public class PolicyAORspFields {
     private String policy;
     @JsonProperty("content-type")
-    private String contentType = "application/json";
+    private String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
     @JsonProperty("x-amz-credential")
     private String xAmzCredential;
     @JsonProperty("x-amz-algorithm")
