@@ -5,12 +5,9 @@ info:
   license:
     name: MIT
     url: https://github.com/tiki/l0-storage/blob/main/LICENSE
-  version: 0.0.1
-externalDocs:
-  description: javadocs
-  url: coming soon
+  version: 0.0.7
 servers:
-- url: coming soon
+- url: https://storage.l0.mytiki.com
 paths:
   /api/latest/usage:
     post:
@@ -173,6 +170,9 @@ components:
           type: string
         keyPrefix:
           type: string
+        maxBytes:
+          type: integer
+          format: int64
         compute:
           type: array
           items:

@@ -6,6 +6,7 @@
 package com.mytiki.l0_storage.utilities;
 
 import org.apache.commons.codec.binary.Hex;
+import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -63,11 +64,11 @@ public class WasabiFacade {
                 "    {\"x-amz-credential\": \"" + buildCredential(dt) + "\"},\n" +
                 "    {\"x-amz-algorithm\": \"AWS4-HMAC-SHA256\"},\n" +
                 "    {\"x-amz-date\": \"" + formatDateTime(dt) + "\"},\n" +
-                "    {\"content-type\": \"application/json\"},\n" +
+                "    {\"content-type\": \"" + MediaType.APPLICATION_OCTET_STREAM_VALUE + "\"},\n" +
                 "    [\"content-length-range\", 100, 1048576],\n" +
                 "    [\"starts-with\", \"$x-amz-object-lock-mode\", \"GOVERNANCE\"], \n" +
                 "    [\"starts-with\", \"$x-amz-object-lock-retain-until-date\", \"" + lockUntil + "\"], \n" +
-                "    [\"starts-with\", \"$Content-MD5\", \"\"] \n" +
+                "    [\"starts-with\", \"$content-md5\", \"\"] \n" +
                 "  ]\n" +
                 "}";
         return Base64.getEncoder().encodeToString(policy.getBytes(StandardCharsets.UTF_8));
