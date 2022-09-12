@@ -11,7 +11,7 @@ import com.mytiki.l0_storage.utilities.RSAFacade;
 import com.mytiki.l0_storage.utilities.SHAFacade;
 import com.mytiki.l0_storage.utilities.WasabiFacade;
 import com.mytiki.spring_rest_api.ApiExceptionBuilder;
-import org.apache.commons.codec.binary.Hex;
+import com.nimbusds.jose.util.Base64URL;
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,8 +47,8 @@ public class PolicyService {
         String customerId = guardForApiId(apiId);
         guardForSignature(req);
         try {
-            String hashedCustomerId = Hex.encodeHexString(SHAFacade.sha3_256(customerId));
-            String hashedPubKey = Hex.encodeHexString(SHAFacade.sha3_256(req.getPubKey()));
+            String hashedCustomerId = Base64URL.encode(SHAFacade.sha3_256(customerId)).toString();
+            String hashedPubKey = Base64URL.encode(SHAFacade.sha3_256(req.getPubKey())).toString();
             String urnPrefix = hashedCustomerId + "/" + hashedPubKey + "/";
 
             ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC).withNano(0);
