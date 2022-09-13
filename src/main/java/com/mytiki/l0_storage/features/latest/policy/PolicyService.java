@@ -31,7 +31,7 @@ public class PolicyService {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     public static final int POLICY_EXPIRATION_HOURS = 1;
     //public static final int OBJECT_LOCK_YEARS = 10;
-    public static final int OBJECT_LOCK_MINUTES = 10;
+    public static final int OBJECT_LOCK_HOURS = 1;
 
     private final PolicyRepository repository;
     private final ApiIdService apiIdService;
@@ -53,7 +53,7 @@ public class PolicyService {
 
             ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC).withNano(0);
             String expires = now.plusHours(POLICY_EXPIRATION_HOURS).format(DateTimeFormatter.ISO_INSTANT);
-            String lockUntil = now.plusMinutes(OBJECT_LOCK_MINUTES).format(DateTimeFormatter.ISO_INSTANT);
+            String lockUntil = now.plusMinutes(OBJECT_LOCK_HOURS).format(DateTimeFormatter.ISO_INSTANT);
             String policy = wasabiFacade.buildPolicy(urnPrefix, now, expires, lockUntil);
             String signature = wasabiFacade.signV4(policy, now);
 

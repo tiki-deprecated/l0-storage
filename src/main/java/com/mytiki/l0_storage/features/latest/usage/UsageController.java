@@ -10,10 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -34,6 +32,7 @@ public class UsageController {
             @ApiResponse(responseCode = "204", description = "No Content", content = @Content),
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)})
     @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void post(@RequestBody UsageAOReq body){
         service.log(body);
     }
