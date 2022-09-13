@@ -1,6 +1,6 @@
 {
   "name": "l0-storage-upload",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "type": "module",
   "devDependencies": {
     "prettier": "2.7.1",
