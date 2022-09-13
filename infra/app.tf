@@ -9,7 +9,6 @@ resource "digitalocean_app" "l0-storage-app" {
     domain {
       name = "storage.l0.mytiki.com"
       type = "PRIMARY"
-      zone = "l0.mytiki.com"
     }
 
     service {
