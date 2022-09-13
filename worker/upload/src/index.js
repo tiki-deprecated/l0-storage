@@ -8,7 +8,7 @@ export default {
     if (request.method === "POST") {
       const requestBody = await request.clone().formData();
       const wasabiResponse = await fetch(
-        new Request("https://l0-storage-test.s3.us-central-1.wasabisys.com", {
+        new Request("https://" + env.BUCKET_NAME + ".us-central-1.wasabisys.com", {
           method: request.method,
           headers: request.headers,
           body: request.body,

@@ -12,4 +12,5 @@ compatibility_date = "2022-09-12"
 # The necessary secrets are:
 # - REMOTE_ID
 # - REMOTE_SECRET
+# - BUCKET_NAME
 # Run `echo <VALUE> | wrangler secret put <NAME>` for each of these
