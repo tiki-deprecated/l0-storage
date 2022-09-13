@@ -32,6 +32,7 @@ resource "digitalocean_app" "l0-storage-app" {
 
       health_check {
         http_path = "/health"
+        initial_delay_seconds = 30
       }
 
       alert {
