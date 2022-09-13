@@ -164,6 +164,9 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: 'worker/upload'
+          secrets: |
+            REMOTE_ID
+            REMOTE_SECRET
         env:
           REMOTE_ID: ${{ secrets.WORKER_ENV_REMOTE_ID }}
           REMOTE_SECRET: ${{ secrets.WORKER_ENV_REMOTE_SECRET }}
