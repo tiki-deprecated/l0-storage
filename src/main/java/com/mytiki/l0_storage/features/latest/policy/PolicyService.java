@@ -53,7 +53,7 @@ public class PolicyService {
 
             ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC).withNano(0);
             String expires = now.plusHours(POLICY_EXPIRATION_HOURS).format(DateTimeFormatter.ISO_INSTANT);
-            String lockUntil = now.plusMinutes(OBJECT_LOCK_HOURS).format(DateTimeFormatter.ISO_INSTANT);
+            String lockUntil = now.plusHours(OBJECT_LOCK_HOURS).format(DateTimeFormatter.ISO_INSTANT);
             String policy = wasabiFacade.buildPolicy(urnPrefix, now, expires, lockUntil);
             String signature = wasabiFacade.signV4(policy, now);
 
