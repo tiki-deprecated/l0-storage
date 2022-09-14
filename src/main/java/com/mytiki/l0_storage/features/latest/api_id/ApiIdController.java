@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -29,7 +30,7 @@ public class ApiIdController {
         this.service = service;
     }
 
-    @Operation(summary = "Get all provisioned API Ids")
+    @Operation(summary = "Get all provisioned API Ids", security = @SecurityRequirement(name = "jwt"))
     @RequestMapping(method = RequestMethod.GET)
     public ApiPage<ApiIdAORsp> getAll(
             Authentication authentication,
@@ -38,7 +39,7 @@ public class ApiIdController {
         return service.all(authentication.getName(), page, size);
     }
 
-    @Operation(summary = "Get an API Id's properties", responses = {
+    @Operation(summary = "Get an API Id's properties", security = @SecurityRequirement(name = "jwt"), responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     schema = @Schema(implementation = ApiIdAORsp.class))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
@@ -49,7 +50,7 @@ public class ApiIdController {
         return service.get(apiId, authentication.getName());
     }
 
-    @Operation(summary = "Revoke an API Id (permanent)", responses = {
+    @Operation(summary = "Revoke an API Id (permanent)", security = @SecurityRequirement(name = "jwt"), responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     schema = @Schema(implementation = ApiIdAORsp.class))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
@@ -61,7 +62,7 @@ public class ApiIdController {
         return service.revoke(apiId, authentication.getName());
     }
 
-    @Operation(summary = "Request a new API Id")
+    @Operation(summary = "Request a new API Id", security = @SecurityRequirement(name = "jwt"))
     @RequestMapping(method = RequestMethod.POST, path = PATH_NEW)
     public ApiIdAORsp postNew(Authentication authentication){
         return service.register(authentication.getName());
