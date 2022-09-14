@@ -9,6 +9,7 @@ import com.mytiki.spring_rest_api.ApiConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class UsageController {
     }
 
     @RolesAllowed("REMOTE")
-    @Operation(summary = "Submit a usage report", responses = {
+    @Operation(summary = "Submit a usage report", security = @SecurityRequirement(name = "remote"), responses = {
             @ApiResponse(responseCode = "204", description = "No Content", content = @Content),
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)})
     @RequestMapping(method = RequestMethod.POST)

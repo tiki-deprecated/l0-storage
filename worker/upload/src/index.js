@@ -8,7 +8,7 @@ export default {
     if (request.method === "POST") {
       const requestBody = await request.clone().formData();
       const wasabiResponse = await fetch(
-        new Request("https://" + env.BUCKET_NAME + ".s3.us-central-1.wasabisys.com", {
+        new Request("https://" + env.BUCKET_NAME, {
           method: request.method,
           headers: request.headers,
           body: request.body,
@@ -16,6 +16,7 @@ export default {
       );
       if (wasabiResponse.status !== 204) return wasabiResponse;
       else {
+        const file = requestBody.get("file");
         return fetch(
           new Request("https://storage.l0.mytiki.com/api/latest/usage", {
             method: "POST",
@@ -26,7 +27,7 @@ export default {
             },
             body: JSON.stringify({
               path: requestBody.get("key"),
-              sizeBytes: requestBody.get("file").size,
+              sizeBytes: file.length == null ? file.size : file.length,
             }),
           })
         );
