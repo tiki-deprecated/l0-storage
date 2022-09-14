@@ -10,6 +10,10 @@ import com.mytiki.l0_storage.features.latest.policy.PolicyController;
 import com.mytiki.l0_storage.features.latest.usage.UsageController;
 import com.mytiki.l0_storage.utilities.Constants;
 import com.mytiki.spring_rest_api.ApiConstants;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
@@ -81,8 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .httpPublicKeyPinning().and()
                     .contentSecurityPolicy(CONTENT_SECURITY_POLICY).and().and()
                 .anonymous().and()
-                .cors()
-                    .configurationSource(corsConfigurationSource()).and()
+                .cors().configurationSource(corsConfigurationSource()).and()
                 .authorizeRequests()
                     .antMatchers(HttpMethod.GET, ApiConstants.HEALTH_ROUTE).permitAll()
                     .antMatchers(HttpMethod.GET, Constants.API_DOCS_PATH).permitAll()
@@ -105,14 +108,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .roles(REMOTE_WORKER_ROLE);
     }
 
+
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList("*"));
+        configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET","PUT","POST","DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Accept"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("*/**", configuration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
