@@ -52,7 +52,7 @@ public class AppConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("L0 Storage")
-                        .description("Long term immutable block storage")
+                        .description("Immutable Block Storage")
                         .version(appVersion)
                         .license(new License()
                                 .name("MIT")
