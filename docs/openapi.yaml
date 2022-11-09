@@ -169,7 +169,7 @@ paths:
                 $ref: '#/components/schemas/ApiPageApiIdAORsp'
       security:
       - jwt: []
-  /api/latest/api-id/key/{api-id}:
+  /api/latest/api-id/id/{api-id}:
     get:
       tags:
       - API ID
