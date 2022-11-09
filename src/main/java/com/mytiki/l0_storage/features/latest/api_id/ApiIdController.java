@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = ApiIdController.PATH_CONTROLLER)
 public class ApiIdController {
     public static final String PATH_CONTROLLER = ApiConstants.API_LATEST_ROUTE + "api-id";
-    public static final String PATH_KEY = "/key";
+    public static final String PATH_ID = "/id";
     public static final String PATH_NEW = "/new";
     private final ApiIdService service;
 
@@ -43,7 +43,7 @@ public class ApiIdController {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     schema = @Schema(implementation = ApiIdAORsp.class))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
-    @RequestMapping(method = RequestMethod.GET, path = PATH_KEY + "/{api-id}")
+    @RequestMapping(method = RequestMethod.GET, path = PATH_ID + "/{api-id}")
     public ApiIdAORsp getKey(
             Authentication authentication,
             @PathVariable(name = "api-id") String apiId){
@@ -55,7 +55,7 @@ public class ApiIdController {
                     schema = @Schema(implementation = ApiIdAORsp.class))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    @RequestMapping(method = RequestMethod.DELETE, path = PATH_KEY + "/{api-id}")
+    @RequestMapping(method = RequestMethod.DELETE, path = PATH_ID + "/{api-id}")
     public ApiIdAORsp deleteKey(
             Authentication authentication,
             @PathVariable(name = "api-id") String apiId){

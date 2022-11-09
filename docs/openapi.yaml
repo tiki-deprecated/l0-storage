@@ -1,11 +1,11 @@
 openapi: 3.0.1
 info:
   title: L0 Storage
-  description: Long term immutable block storage
+  description: Immutable Block Storage
   license:
     name: MIT
     url: https://github.com/tiki/l0-storage/blob/main/LICENSE
-  version: 0.0.10
+  version: 0.0.11
 servers:
 - url: https://storage.l0.mytiki.com
 paths:
@@ -169,7 +169,7 @@ paths:
                 $ref: '#/components/schemas/ApiPageApiIdAORsp'
       security:
       - jwt: []
-  /api/latest/api-id/key/{api-id}:
+  /api/latest/api-id/id/{api-id}:
     get:
       tags:
       - API ID
