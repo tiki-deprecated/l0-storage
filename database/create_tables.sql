@@ -7,31 +7,31 @@
 -- API ID
 -- -----------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS api_id(
-    api_id UUID PRIMARY KEY,
-    customer_id TEXT NOT NULL,
+    aid UUID PRIMARY KEY,
+    uid TEXT NOT NULL,
     is_valid BOOLEAN NOT NULL DEFAULT FALSE,
     created_utc TIMESTAMP WITH TIME ZONE NOT NULL,
     modified_utc TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 -- -----------------------------------------------------------------------
--- POLICY
+-- TOKEN
 -- -----------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS policy(
-    policy_id BIGSERIAL NOT NULL,
-    api_id uuid NOT NULL,
+CREATE TABLE IF NOT EXISTS token(
+    tid UUID PRIMARY KEY,
+    aid UUID NOT NULL,
     urn_prefix TEXT NOT NULL,
     created_utc TIMESTAMP WITH TIME ZONE NOT NULL,
-    FOREIGN KEY(api_id) REFERENCES api_id(api_id)
+    FOREIGN KEY(aid) REFERENCES api_id(aid)
 );
 
 -- -----------------------------------------------------------------------
--- USAGE
+-- REPORT
 -- -----------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS usage(
-    usage_id BIGSERIAL NOT NULL,
+CREATE TABLE IF NOT EXISTS report(
+    rid BIGSERIAL PRIMARY KEY,
     urn_prefix TEXT NOT NULL,
     size_bytes BIGINT,
     created_utc TIMESTAMP WITH TIME ZONE NOT NULL
 );
-CREATE INDEX idx_usage_log_urn_created ON usage (urn_prefix, created_utc);
+CREATE INDEX idx_usage_log_urn_created ON report (urn_prefix, created_utc);

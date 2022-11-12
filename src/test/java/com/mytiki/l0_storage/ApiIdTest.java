@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles(profiles = {"test", "local"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ApiKeyTest {
+public class ApiIdTest {
 
     @Autowired
     private ApiIdService service;
@@ -48,7 +48,7 @@ public class ApiKeyTest {
         Optional<ApiIdDO> found = repository.findById(UUID.fromString(rsp.getApiId()));
 
         assertTrue(found.isPresent());
-        assertEquals(rsp.getApiId(), found.get().getApiId().toString());
+        assertEquals(rsp.getApiId(), found.get().getAid().toString());
         assertEquals(rsp.getValid(), found.get().getValid());
         assertNotNull(found.get().getCreated());
         assertNotNull(found.get().getModified());

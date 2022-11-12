@@ -6,14 +6,10 @@
 package com.mytiki.l0_storage.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mytiki.l0_storage.features.latest.policy.PolicyController;
-import com.mytiki.l0_storage.features.latest.usage.UsageController;
+import com.mytiki.l0_storage.features.latest.token.TokenController;
+import com.mytiki.l0_storage.features.latest.report.ReportController;
 import com.mytiki.l0_storage.utilities.Constants;
 import com.mytiki.spring_rest_api.ApiConstants;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
@@ -89,8 +85,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers(HttpMethod.GET, ApiConstants.HEALTH_ROUTE).permitAll()
                     .antMatchers(HttpMethod.GET, Constants.API_DOCS_PATH).permitAll()
-                    .antMatchers(HttpMethod.POST, PolicyController.PATH_CONTROLLER).permitAll()
-                    .antMatchers(HttpMethod.POST, UsageController.PATH_CONTROLLER).hasRole(REMOTE_WORKER_ROLE)
+                    .antMatchers(HttpMethod.POST, TokenController.PATH_CONTROLLER).permitAll()
+                    .antMatchers(HttpMethod.POST, ReportController.PATH_CONTROLLER).hasRole(REMOTE_WORKER_ROLE)
                     .anyRequest().authenticated().and()
                 .httpBasic()
                     .authenticationEntryPoint(authenticationEntryPoint).and()

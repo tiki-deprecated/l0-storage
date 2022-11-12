@@ -8,7 +8,6 @@ package com.mytiki.l0_storage.main;
 import com.mytiki.l0_storage.features.latest.FeaturesConfig;
 import com.mytiki.l0_storage.health.HealthConfig;
 import com.mytiki.l0_storage.security.SecurityConfig;
-import com.mytiki.l0_storage.utilities.UtilitiesConfig;
 import com.mytiki.spring_rest_api.ApiExceptionHandlerDefault;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -36,8 +35,7 @@ import java.util.TimeZone;
         ApiExceptionHandlerDefault.class,
         SecurityConfig.class,
         HealthConfig.class,
-        FeaturesConfig.class,
-        UtilitiesConfig.class
+        FeaturesConfig.class
 })
 public class AppConfig {
     @PostConstruct
@@ -78,7 +76,7 @@ public class AppConfig {
                 .path("/api/latest/upload",
                         new PathItem().post(
                                 new Operation()
-                                        .tags(Collections.singletonList("UPLOAD"))
+                                        .tags(Collections.singletonList("STORAGE"))
                                         .operationId("post")
                                         .requestBody(new RequestBody()
                                                 .content(new Content()

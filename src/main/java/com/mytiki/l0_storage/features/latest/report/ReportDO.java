@@ -3,30 +3,30 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-package com.mytiki.l0_storage.features.latest.usage;
+package com.mytiki.l0_storage.features.latest.report;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "usage")
-public class UsageDO implements Serializable {
+@Table(name = "report")
+public class ReportDO implements Serializable {
 
-    private Long usageId;
+    private Long rid;
     private String urnPrefix;
     private Long sizeBytes;
     private ZonedDateTime created;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "usage_id")
-    public Long getUsageId() {
-        return usageId;
+    @Column(name = "rid")
+    public Long getRid() {
+        return rid;
     }
 
-    public void setUsageId(Long usageId) {
-        this.usageId = usageId;
+    public void setRid(Long usageId) {
+        this.rid = usageId;
     }
 
     @Column(name = "urn_prefix")

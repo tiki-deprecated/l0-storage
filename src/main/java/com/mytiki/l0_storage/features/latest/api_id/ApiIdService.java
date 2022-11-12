@@ -30,10 +30,10 @@ public class ApiIdService {
         this.repository = repository;
     }
 
-    public ApiIdAORsp register(String customerId) {
+    public ApiIdAORsp register(String uid) {
         ApiIdDO keyDO = new ApiIdDO();
-        keyDO.setCustomerId(customerId);
-        keyDO.setApiId(UUID.randomUUID());
+        keyDO.setUid(uid);
+        keyDO.setAid(UUID.randomUUID());
         keyDO.setValid(true);
         ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
         keyDO.setCreated(now);
@@ -43,9 +43,9 @@ public class ApiIdService {
         return toRsp(keyDO);
     }
 
-    public ApiIdAORsp revoke(String apiId, String customerId) {
+    public ApiIdAORsp revoke(String apiId, String uid) {
         Optional<ApiIdDO> exists = repository.findById(UUID.fromString(apiId));
-        if(exists.isPresent() && exists.get().getCustomerId().equals(customerId)){
+        if(exists.isPresent() && exists.get().getUid().equals(uid)){
             ApiIdDO revoked = exists.get();
             revoked.setValid(false);
             revoked.setModified(ZonedDateTime.now(ZoneOffset.UTC));
@@ -60,7 +60,7 @@ public class ApiIdService {
 
     public ApiIdAORsp get(String apiId, String customerId) {
         Optional<ApiIdDO> exists = find(apiId);
-        if(exists.isPresent() && exists.get().getCustomerId().equals(customerId))
+        if(exists.isPresent() && exists.get().getUid().equals(customerId))
             return toRsp(exists.get());
         else
             throw new ApiExceptionBuilder(HttpStatus.NOT_FOUND)
@@ -69,8 +69,8 @@ public class ApiIdService {
                     .build();
     }
 
-    public ApiPage<ApiIdAORsp> all(String customerId, int page, int size){
-        Page<ApiIdDO> all = repository.findAllByCustomerId(customerId, PageRequest.of(page, size));
+    public ApiPage<ApiIdAORsp> all(String uid, int page, int size){
+        Page<ApiIdDO> all = repository.findAllByUid(uid, PageRequest.of(page, size));
         return new ApiPageBuilder<ApiIdAORsp>()
                 .elements(all.stream().map(this::toRsp).collect(Collectors.toList()))
                 .page(all.getNumber())
@@ -81,7 +81,7 @@ public class ApiIdService {
 
     private ApiIdAORsp toRsp(ApiIdDO apiIdDO){
         ApiIdAORsp rsp = new ApiIdAORsp();
-        rsp.setApiId(apiIdDO.getApiId().toString());
+        rsp.setApiId(apiIdDO.getAid().toString());
         rsp.setValid(apiIdDO.getValid());
         rsp.setCreated(apiIdDO.getCreated());
         rsp.setModified(apiIdDO.getModified());

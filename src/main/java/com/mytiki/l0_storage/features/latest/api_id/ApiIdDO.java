@@ -16,30 +16,30 @@ import java.util.UUID;
 @Entity
 @Table(name = "api_id")
 public class ApiIdDO implements Serializable {
-    private UUID apiId;
-    private String customerId;
+    private UUID aid;
+    private String uid;
     private Boolean valid;
     private ZonedDateTime created;
     private ZonedDateTime modified;
 
     @Id
-    @Column(name = "api_id")
+    @Column(name = "aid")
     @org.hibernate.annotations.Type(type="org.hibernate.type.PostgresUUIDType")
-    public UUID getApiId() {
-        return apiId;
+    public UUID getAid() {
+        return aid;
     }
 
-    public void setApiId(UUID apiId) {
-        this.apiId = apiId;
+    public void setAid(UUID aid) {
+        this.aid = aid;
     }
 
-    @Column(name = "customer_id")
-    public String getCustomerId() {
-        return customerId;
+    @Column(name = "uid")
+    public String getUid() {
+        return uid;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     @Column(name = "is_valid")

@@ -3,7 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-package com.mytiki.l0_storage.features.latest.usage;
+package com.mytiki.l0_storage.features.latest.report;
 
 import com.mytiki.spring_rest_api.ApiConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,15 +16,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 
-@Tag(name = "USAGE")
+@Tag(name = "STORAGE")
 @RestController
-@RequestMapping(value = UsageController.PATH_CONTROLLER)
-public class UsageController {
-    public static final String PATH_CONTROLLER = ApiConstants.API_LATEST_ROUTE + "usage";
+@RequestMapping(value = ReportController.PATH_CONTROLLER)
+public class ReportController {
+    public static final String PATH_CONTROLLER = ApiConstants.API_LATEST_ROUTE + "report";
 
-    private final UsageService service;
+    private final ReportService service;
 
-    public UsageController(UsageService service) {
+    public ReportController(ReportService service) {
         this.service = service;
     }
 
@@ -34,7 +34,7 @@ public class UsageController {
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)})
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void post(@RequestBody UsageAOReq body){
+    public void post(@RequestBody ReportAOReq body){
         service.log(body);
     }
 }

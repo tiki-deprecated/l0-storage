@@ -3,7 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-package com.mytiki.l0_storage.features.latest.usage;
+package com.mytiki.l0_storage.features.latest.report;
 
 import com.mytiki.spring_rest_api.ApiExceptionBuilder;
 import org.springframework.http.HttpStatus;
@@ -11,15 +11,15 @@ import org.springframework.http.HttpStatus;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-public class UsageService {
+public class ReportService {
 
-    private final UsageRepository repository;
+    private final ReportRepository repository;
 
-    public UsageService(UsageRepository repository) {
+    public ReportService(ReportRepository repository) {
         this.repository = repository;
     }
 
-    public void log(UsageAOReq req){
+    public void log(ReportAOReq req){
         String[] splitPath = req.getPath().split("/");
         if(splitPath.length < 2)
             throw new ApiExceptionBuilder(HttpStatus.BAD_REQUEST)
@@ -27,7 +27,7 @@ public class UsageService {
                     .detail("Unable to identify urn prefix")
                     .build();
 
-        UsageDO usageDO = new UsageDO();
+        ReportDO usageDO = new ReportDO();
         usageDO.setCreated(ZonedDateTime.now(ZoneOffset.UTC));
         usageDO.setSizeBytes(req.getSizeBytes());
         usageDO.setUrnPrefix(splitPath[0] + "/" + splitPath[1]);
