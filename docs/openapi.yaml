@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: L0 Storage
-  description: Immutable Block Storage
+  description: Long-term immutable storage
   license:
     name: MIT
     url: https://github.com/tiki/l0-storage/blob/main/LICENSE
@@ -13,6 +13,7 @@ paths:
     post:
       tags:
       - STORAGE
+      description: Upload a block
       operationId: post
       requestBody:
         content:
