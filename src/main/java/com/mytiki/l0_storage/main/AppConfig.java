@@ -50,7 +50,7 @@ public class AppConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("L0 Storage")
-                        .description("Immutable Block Storage")
+                        .description("Long-term immutable storage")
                         .version(appVersion)
                         .license(new License()
                                 .name("MIT")
@@ -78,6 +78,7 @@ public class AppConfig {
                                 new Operation()
                                         .tags(Collections.singletonList("STORAGE"))
                                         .operationId("post")
+                                        .description("Upload a block")
                                         .requestBody(new RequestBody()
                                                 .content(new Content()
                                                         .addMediaType("multipart/form-data",

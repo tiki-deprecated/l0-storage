@@ -12,7 +12,7 @@ paths:
   /api/latest/upload:
     post:
       tags:
-      - UPLOAD
+      - STORAGE
       operationId: post
       requestBody:
         content:
@@ -58,31 +58,12 @@ paths:
       responses:
         "204":
           description: No Content
-  /api/latest/usage:
+  /api/latest/token:
     post:
       tags:
-      - USAGE
-      summary: Submit a usage report
+      - STORAGE
+      summary: Request a new token
       operationId: post_1
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UsageAOReq'
-        required: true
-      responses:
-        "204":
-          description: No Content
-        "403":
-          description: Forbidden
-      security:
-      - remote: []
-  /api/latest/policy:
-    post:
-      tags:
-      - POLICY
-      summary: Request a new policy
-      operationId: post_2
       parameters:
       - name: x-api-id
         in: header
@@ -93,7 +74,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PolicyAOReq'
+              $ref: '#/components/schemas/TokenAOReq'
         required: true
       responses:
         "200":
@@ -101,7 +82,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PolicyAORsp'
+                $ref: '#/components/schemas/TokenAORsp'
         "400":
           description: Bad Request
         "403":
@@ -110,6 +91,25 @@ paths:
           description: Expectation Failed
       security:
       - apiId: []
+  /api/latest/report:
+    post:
+      tags:
+      - STORAGE
+      summary: Submit a usage report
+      operationId: post_2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportAOReq'
+        required: true
+      responses:
+        "204":
+          description: No Content
+        "403":
+          description: Forbidden
+      security:
+      - remote: []
   /api/latest/api-id/new:
     post:
       tags:
@@ -216,50 +216,19 @@ paths:
       - jwt: []
 components:
   schemas:
-    UsageAOReq:
+    TokenAORsp:
       type: object
       properties:
-        path:
+        type:
           type: string
-        sizeBytes:
-          type: integer
-          format: int64
-    PolicyAORsp:
-      type: object
-      properties:
+        token:
+          type: string
         expires:
           type: string
-        keyPrefix:
+          format: date-time
+        urnPrefix:
           type: string
-        maxBytes:
-          type: integer
-          format: int64
-        compute:
-          type: array
-          items:
-            type: string
-        fields:
-          $ref: '#/components/schemas/PolicyAORspFields'
-    PolicyAORspFields:
-      type: object
-      properties:
-        policy:
-          type: string
-        content-type:
-          type: string
-        x-amz-credential:
-          type: string
-        x-amz-algorithm:
-          type: string
-        x-amz-date:
-          type: string
-        x-amz-signature:
-          type: string
-        x-amz-object-lock-mode:
-          type: string
-        x-amz-object-lock-retain-until-date:
-          type: string
-    PolicyAOReq:
+    TokenAOReq:
       type: object
       properties:
         pubKey:
@@ -268,6 +237,14 @@ components:
           type: string
         stringToSign:
           type: string
+    ReportAOReq:
+      type: object
+      properties:
+        path:
+          type: string
+        sizeBytes:
+          type: integer
+          format: int64
     ApiIdAORsp:
       type: object
       properties:
