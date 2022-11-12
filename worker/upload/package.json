@@ -3,7 +3,11 @@
   "version": "0.0.10",
   "type": "module",
   "devDependencies": {
-    "prettier": "2.7.1",
+    "eslint": "^8.27.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.5.1",
+    "eslint-plugin-promise": "^6.1.1",
     "wrangler": "2.0.29"
   },
   "private": true,
