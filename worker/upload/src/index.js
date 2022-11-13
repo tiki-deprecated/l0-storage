@@ -23,7 +23,7 @@ export default {
       }
 
       const l0Rsp = await report(env.REMOTE_ID, env.REMOTE_SECRET, body.key, blockBytes.length)
-      if (l0Rsp.status !== 200) {
+      if (l0Rsp.status !== 204) {
         console.log('WARNING. Failed to report usage')
         console.log(l0Rsp)
       }
