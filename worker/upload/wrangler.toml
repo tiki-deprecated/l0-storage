@@ -9,7 +9,7 @@ routes = [
 compatibility_date = "2022-09-12"
 
 [vars]
-PUBKEY = '{ "kty": "EC", "use": "sig", "crv": "P-256", "kid": "dc4bde16-1cff-4335-bd8f-e5639761fdbe", "x": "zAq5eyNt6b25XGckC5u4whIl558xs-IzogJqjygysZo", "y": "hjwlv3xt0L10XiJASkjOFHUxI_72ZeLI378trg8pN6c" }'
+PUBKEY = '{ "kty": "EC", "use": "sig", "crv": "P-256", "kid": "4570d35d-c0f6-44ff-a40b-350264bb6e2f", "x": "xgAA9ptVg940RBe8_nPmdzYrwUuU2gIeCaRe2v6uVL8", "y": "leiAoSoJvGSUjRIL5WvL9GIYV6YJ_VzbrP8838Y0h7M" }'
 MAX_BYTES = 1000000
 
 # The necessary secrets are:
