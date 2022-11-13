@@ -3,7 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import { decode, guardClaims } from './l0Storage.js'
+import { decode, guardClaims, report } from './l0Storage.js'
 import { put } from './wasabi.js'
 
 export default {
@@ -13,12 +13,19 @@ export default {
       const body = await handleBody(request, env)
       await handleAuth(request, env, body)
 
-      const wasabiRsp = await put(env.WASABI_ID, env.WASABI_SECRET, body.key, new TextEncoder().encode(body.block))
+      const blockBytes = new TextEncoder().encode(atob(body.block))
+      const wasabiRsp = await put(env.WASABI_ID, env.WASABI_SECRET, body.key, blockBytes)
       if (wasabiRsp.status !== 200) {
         return Response.json({
           message: 'Bucket upload failed',
           help: 'Contact support'
         }, { status: 424 })
+      }
+
+      const l0Rsp = await report(env.REMOTE_ID, env.REMOTE_SECRET, body.key, blockBytes.length)
+      if (l0Rsp.status !== 200) {
+        console.log('WARNING. Failed to report usage')
+        console.log(l0Rsp)
       }
 
       return new Response('', { status: 201, headers: { 'Content-Type': 'application/json' } })
@@ -89,10 +96,7 @@ async function handleBody (request, env) {
       detail: 'Max block size is 1MB'
     }, { status: 413 })
   }
-  return {
-    key: body.key,
-    block: atob(body.block)
-  }
+  return body
 }
 
 async function handleAuth (request, env, body) {
