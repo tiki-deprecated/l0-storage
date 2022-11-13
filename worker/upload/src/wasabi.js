@@ -21,6 +21,7 @@ export {
 }
 
 async function put (id, secret, key, file) {
+  if (!key.startsWith('/')) key = '/' + key
   const date = new Date()
   const hashedPayload = buf2hex(await crypto.subtle.digest('SHA-256', file))
   const signedHeaders = 'host;x-amz-content-sha256;x-amz-date'
@@ -34,14 +35,8 @@ async function put (id, secret, key, file) {
   const signature = buf2hex(await hmacSha(enc.encode(s2s), signKey))
   const auth = authorization(id, date, region, service, signedHeaders, signature)
 
-  console.log(cReq)
-  console.log(s2s)
-  console.log(auth)
-  console.log(date2timestamp(date))
-  console.log(hashedPayload)
-
   return await fetch(
-    new Request('https://' + bucket + '/' + key, {
+    new Request('https://' + bucket + key, {
       method: 'PUT',
       headers: {
         Authorization: auth,

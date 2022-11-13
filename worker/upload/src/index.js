@@ -13,13 +13,8 @@ export default {
       const body = await handleBody(request, env)
       await handleAuth(request, env, body)
 
-      env.WASABI_ID = 'WE1RGBTQKQ6OLIACP836'
-      env.WASABI_SECRET = '5eH67iXLzJFKA0kKJqn0aG7UI2pq72vfw27wonw8'
-
-      console.log(body.block)
-
       const wasabiRsp = await put(env.WASABI_ID, env.WASABI_SECRET, body.key, new TextEncoder().encode(body.block))
-      if (wasabiRsp.status !== 204) {
+      if (wasabiRsp.status !== 200) {
         return Response.json({
           message: 'Bucket upload failed',
           help: 'Contact support'
@@ -88,8 +83,7 @@ async function handleBody (request, env) {
       detail: 'Both key & block are required'
     }, { status: 400 })
   }
-  const blockBytes = atob(body.block)
-  if (blockBytes.length > env.MAX_BYTES) {
+  if (body.block.length > env.MAX_BYTES) {
     throw Response.json({
       message: 'Request too large',
       detail: 'Max block size is 1MB'
@@ -97,7 +91,7 @@ async function handleBody (request, env) {
   }
   return {
     key: body.key,
-    block: blockBytes
+    block: atob(body.block)
   }
 }
 
