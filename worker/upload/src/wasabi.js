@@ -4,66 +4,56 @@
  */
 
 const enc = new TextEncoder()
+const bucket = 'bucket.storage.l0.mytiki.com'
+const region = 'us-central-1'
+const service = 's3'
 
-export async function put (bucket, key, file) {
+export {
+  put,
+  canonicalRequest,
+  signingKey,
+  stringToSign,
+  buf2hex,
+  authorization,
+  date2timestamp,
+  date2datestamp,
+  hmacSha
+}
+
+async function put (id, secret, key, file) {
+  const date = new Date()
+  const hashedPayload = buf2hex(await crypto.subtle.digest('SHA-256', file))
+  const signedHeaders = 'host;x-amz-content-sha256;x-amz-date'
+  const canonicalHeaders = 'host:' + bucket + '\n' +
+      'x-amz-content-sha256:' + hashedPayload + '\n' +
+      'x-amz-date:' + date2timestamp(date) + '\n'
+  const cReq = await canonicalRequest('PUT', key, undefined,
+    canonicalHeaders, signedHeaders, hashedPayload)
+  const s2s = await stringToSign(date, region, service, cReq)
+  const signKey = await signingKey(secret, date, region, service)
+  const signature = buf2hex(await hmacSha(enc.encode(s2s), signKey))
+  const auth = authorization(id, date, region, service, signedHeaders, signature)
+
+  console.log(cReq)
+  console.log(s2s)
+  console.log(auth)
+  console.log(date2timestamp(date))
+  console.log(hashedPayload)
+
   return await fetch(
-    new Request('https://' + bucket, {
-      method: 'PUT'
-      // headers: request.headers,
-      // body: request.body
+    new Request('https://' + bucket + '/' + key, {
+      method: 'PUT',
+      headers: {
+        Authorization: auth,
+        'x-amz-date': date2timestamp(date),
+        'x-amz-content-sha256': hashedPayload
+      },
+      body: file
     })
   )
 }
 
-const testFile = '{ "hello" : "world" }'
-
-export async function test () {
-  const keyId = ''
-  const secretKey = ''
-  const date = new Date()
-  console.log('x-amz-date: ' + date2timestamp(date))
-
-  const hashedPayload = buf2hex(await crypto.subtle.digest('SHA-256', enc.encode(testFile)))
-  console.log('x-amz-content-sha256: ' + hashedPayload)
-
-  const region = 'us-central-1'
-  const service = 's3'
-  const signedHeaders = 'content-type;host;x-amz-content-sha256;x-amz-date'
-  const canonicalHeaders = 'content-type:application/json\n' +
-      'host:bucket.storage.l0.mytiki.com\n' +
-      'x-amz-content-sha256:' + hashedPayload + '\n' +
-      'x-amz-date:' + date2timestamp(date) + '\n'
-
-  const cReq = await canonicalRequest('PUT', '/test.json', undefined,
-    canonicalHeaders, signedHeaders, hashedPayload)
-
-  console.log(cReq)
-
-  const s2s = await stringToSign(date, region, service, cReq)
-  const signKey = await signingKey(secretKey, date, region, service)
-  const signature = buf2hex(await hmacSha(enc.encode(s2s), signKey))
-  const auth = authorization(keyId, date, region, service, signedHeaders, signature)
-  console.log('Authorization: ' + auth)
-
-  await fetch(
-    new Request('https://bucket.storage.l0.mytiki.com/test.json', {
-      method: 'PUT',
-      headers: {
-        Authorization: auth,
-        'Content-Type': 'application/json',
-        'x-amz-date': date2timestamp(date),
-        'x-amz-content-sha256': hashedPayload
-      },
-      body: enc.encode(testFile)
-    })
-  ).catch((error) => {
-    console.log(error)
-  }).then((rsp) => {
-    console.log('WE DID IT')
-  })
-}
-
-async function canonicalRequest (httpMethod, canonicalUri, canonicalQueryString, canonicalHeaders, signedHeaders, hashedPayload) {
+function canonicalRequest (httpMethod, canonicalUri, canonicalQueryString, canonicalHeaders, signedHeaders, hashedPayload) {
   return [httpMethod, canonicalUri, canonicalQueryString, canonicalHeaders, signedHeaders, hashedPayload].join('\n')
 }
 
@@ -125,15 +115,3 @@ function date2timestamp (date) {
     'Z'
   ].join('')
 }
-
-/* return 'PUT\n' +
-    key + '\n' +
-    '\n' +
-    'content-md5:' + md5 + '\n' +
-    'content-type:' + contentType + '\n' +
-    'host:' + bucket + '\n' +
-    'x-amz-object-lock-mode:GOVERNANCE' + '\n' +
-    'x-amz-object-lock-retain-until-date:' + date2datestamp(lockUntil) + '\n' +
-    '\n' +
-    'content-md5;content-type;host;x-amz-object-lock-mode;x-amz-object-lock-retain-until-date' + '\n' +
-    buf2hex(await crypto.subtle.digest('SHA-256', body)) */
