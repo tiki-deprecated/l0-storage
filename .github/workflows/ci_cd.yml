@@ -168,8 +168,10 @@ jobs:
           secrets: |
             REMOTE_ID
             REMOTE_SECRET
-            BUCKET_NAME
+            WASABI_ID
+            WASABI_SECRET
         env:
           REMOTE_ID: ${{ secrets.WORKER_ENV_REMOTE_ID }}
           REMOTE_SECRET: ${{ secrets.WORKER_ENV_REMOTE_SECRET }}
-          BUCKET_NAME: ${{ secrets.WORKER_ENV_BUCKET_NAME }}
+          WASABI_ID: ${{ secrets.WORKER_ENV_WASABI_ID }}
+          WASABI_SECRET: ${{ secrets.WORKER_ENV_WASABI_SECRET }}
