@@ -8,7 +8,6 @@ package com.mytiki.l0_storage.main;
 import com.mytiki.l0_storage.features.latest.FeaturesConfig;
 import com.mytiki.l0_storage.health.HealthConfig;
 import com.mytiki.l0_storage.security.SecurityConfig;
-import com.mytiki.l0_storage.utilities.UtilitiesConfig;
 import com.mytiki.spring_rest_api.ApiExceptionHandlerDefault;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -16,7 +15,10 @@ import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.media.*;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.JsonSchema;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
@@ -36,8 +38,7 @@ import java.util.TimeZone;
         ApiExceptionHandlerDefault.class,
         SecurityConfig.class,
         HealthConfig.class,
-        FeaturesConfig.class,
-        UtilitiesConfig.class
+        FeaturesConfig.class
 })
 public class AppConfig {
     @PostConstruct
@@ -52,7 +53,7 @@ public class AppConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("L0 Storage")
-                        .description("Immutable Block Storage")
+                        .description("Long-term immutable storage")
                         .version(appVersion)
                         .license(new License()
                                 .name("MIT")
@@ -78,39 +79,30 @@ public class AppConfig {
                 .path("/api/latest/upload",
                         new PathItem().post(
                                 new Operation()
-                                        .tags(Collections.singletonList("UPLOAD"))
+                                        .tags(Collections.singletonList("STORAGE"))
                                         .operationId("post")
+                                        .summary("Upload a block")
                                         .requestBody(new RequestBody()
                                                 .content(new Content()
-                                                        .addMediaType("multipart/form-data",
+                                                        .addMediaType("application/json",
                                                                 new MediaType()
                                                                         .schema(new JsonSchema()
                                                                                 .type("object")
-                                                                                .addProperty("policy", new StringSchema())
-                                                                                .addProperty("content-type", new StringSchema())
-                                                                                .addProperty("x-amz-credential", new StringSchema())
-                                                                                .addProperty("x-amz-algorithm", new StringSchema())
-                                                                                .addProperty("x-amz-date", new StringSchema())
-                                                                                .addProperty("x-amz-signature", new StringSchema())
-                                                                                .addProperty("x-amz-object-lock-mode", new StringSchema())
-                                                                                .addProperty("x-amz-object-lock-retain-until-date", new StringSchema())
                                                                                 .addProperty("key", new StringSchema())
-                                                                                .addProperty("content-md5", new StringSchema())
-                                                                                .addProperty("file", new BinarySchema())
-                                                                                .addRequiredItem("policy")
-                                                                                .addRequiredItem("content-type")
-                                                                                .addRequiredItem("x-amz-credential")
-                                                                                .addRequiredItem("x-amz-algorithm")
-                                                                                .addRequiredItem("x-amz-date")
-                                                                                .addRequiredItem("x-amz-signature")
-                                                                                .addRequiredItem("x-amz-object-lock-mode")
-                                                                                .addRequiredItem("x-amz-object-lock-retain-until-date")
-                                                                                .addRequiredItem("key")
-                                                                                .addRequiredItem("content-md5")
-                                                                                .addRequiredItem("file")
+                                                                                .addProperty("block", new StringSchema())
                                                                         ))))
                                         .responses(new ApiResponses()
-                                                .addApiResponse("204",
-                                                        new ApiResponse().description("No Content")))));
+                                                .addApiResponse("201",
+                                                        new ApiResponse().description("Created"))
+                                                .addApiResponse("400",
+                                                        new ApiResponse().description("Bad Request"))
+                                                .addApiResponse("401",
+                                                        new ApiResponse().description("Unauthorized"))
+                                                .addApiResponse("405",
+                                                        new ApiResponse().description("Method Not Allowed"))
+                                                .addApiResponse("413",
+                                                        new ApiResponse().description("Payload Too Large"))
+                                                .addApiResponse("424",
+                                                        new ApiResponse().description("Failed Dependency")))));
     }
 }

@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,7 +53,6 @@ public class ApiIdController {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     schema = @Schema(implementation = ApiIdAORsp.class))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @RequestMapping(method = RequestMethod.DELETE, path = PATH_ID + "/{api-id}")
     public ApiIdAORsp deleteKey(
             Authentication authentication,

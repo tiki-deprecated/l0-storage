@@ -3,18 +3,18 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-package com.mytiki.l0_storage.features.latest.policy;
+package com.mytiki.l0_storage.features.latest.token;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PolicyAOReq {
+public class TokenAOReq {
     private String pubKey;
     private String signature;
     private String stringToSign;
 
     @JsonCreator
-    public PolicyAOReq(
+    public TokenAOReq(
             @JsonProperty(required = true) String pubKey,
             @JsonProperty(required = true) String signature,
             @JsonProperty(required = true) String stringToSign) {

@@ -3,7 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-package com.mytiki.l0_storage.features.latest.policy;
+package com.mytiki.l0_storage.features.latest.token;
 
 import com.mytiki.spring_rest_api.ApiConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,30 +13,29 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-@Tag(name = "POLICY")
+@Tag(name = "STORAGE")
 @RestController
-@RequestMapping(value = PolicyController.PATH_CONTROLLER)
-public class PolicyController {
-    public static final String PATH_CONTROLLER = ApiConstants.API_LATEST_ROUTE + "policy";
+@RequestMapping(value = TokenController.PATH_CONTROLLER)
+public class TokenController {
+    public static final String PATH_CONTROLLER = ApiConstants.API_LATEST_ROUTE + "token";
 
-    private final PolicyService service;
+    private final TokenService service;
 
-    public PolicyController(PolicyService service) {
+    public TokenController(TokenService service) {
         this.service = service;
     }
 
-    @Operation(summary = "Request a new policy", security = @SecurityRequirement(name = "apiId"), responses = {
+    @Operation(summary = "Request a new token", security = @SecurityRequirement(name = "apiId"), responses = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(
-                    schema = @Schema(implementation = PolicyAORsp.class))),
+                    schema = @Schema(implementation = TokenAORsp.class))),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
             @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
             @ApiResponse(responseCode = "417", description = "Expectation Failed", content = @Content)})
     @RequestMapping(method = RequestMethod.POST)
-    public PolicyAORsp post(
+    public TokenAORsp post(
             @RequestHeader(name = "x-api-id") String apiId,
-            @RequestBody PolicyAOReq body){
-        return service.request(apiId, body);
+            @RequestBody TokenAOReq body){
+        return service.issue(apiId, body);
     }
 }

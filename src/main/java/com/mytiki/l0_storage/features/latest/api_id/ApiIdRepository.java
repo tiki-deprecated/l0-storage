@@ -14,5 +14,5 @@ import java.util.UUID;
 
 @Repository
 public interface ApiIdRepository extends JpaRepository<ApiIdDO, UUID> {
-    Page<ApiIdDO> findAllByCustomerId(String customerId, Pageable pageable);
+    Page<ApiIdDO> findAllByUid(String uid, Pageable pageable);
 }

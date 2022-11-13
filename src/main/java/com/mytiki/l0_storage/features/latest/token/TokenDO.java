@@ -3,35 +3,35 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-package com.mytiki.l0_storage.features.latest.policy;
+package com.mytiki.l0_storage.features.latest.token;
 
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdDO;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "policy")
-public class PolicyDO implements Serializable {
-    private Long policyId;
+@Table(name = "token")
+public class TokenDO implements Serializable {
+    private UUID tid;
     private ApiIdDO apiId;
     private String urnPrefix;
     private ZonedDateTime created;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "policy_id")
-    public Long getPolicyId() {
-        return policyId;
+    @Column(name = "tid")
+    public UUID getTid() {
+        return tid;
     }
 
-    public void setPolicyId(Long policyId) {
-        this.policyId = policyId;
+    public void setTid(UUID tid) {
+        this.tid = tid;
     }
 
     @ManyToOne
-    @JoinColumn(name="api_id")
+    @JoinColumn(name="aid")
     public ApiIdDO getApiId() {
         return apiId;
     }

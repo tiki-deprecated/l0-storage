@@ -3,17 +3,17 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-package com.mytiki.l0_storage.features.latest.usage;
+package com.mytiki.l0_storage.features.latest.report;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class UsageAOReq {
+public class ReportAOReq {
     private String path;
     private long sizeBytes;
 
     @JsonCreator
-    public UsageAOReq(
+    public ReportAOReq(
             @JsonProperty(required = true) String path,
             @JsonProperty(required = true) long sizeBytes) {
         this.path = path;
