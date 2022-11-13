@@ -14,7 +14,7 @@ paths:
       tags:
       - STORAGE
       summary: Upload a block
-      operationId: post
+      operationId: put
       requestBody:
         content:
           application/json:
@@ -43,7 +43,7 @@ paths:
       tags:
       - STORAGE
       summary: Request a new token
-      operationId: post_1
+      operationId: post
       parameters:
       - name: x-api-id
         in: header
@@ -76,7 +76,7 @@ paths:
       tags:
       - STORAGE
       summary: Submit a usage report
-      operationId: post_2
+      operationId: post_1
       requestBody:
         content:
           application/json:

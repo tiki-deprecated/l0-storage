@@ -80,7 +80,7 @@ public class AppConfig {
                         new PathItem().post(
                                 new Operation()
                                         .tags(Collections.singletonList("STORAGE"))
-                                        .operationId("post")
+                                        .operationId("put")
                                         .summary("Upload a block")
                                         .requestBody(new RequestBody()
                                                 .content(new Content()
