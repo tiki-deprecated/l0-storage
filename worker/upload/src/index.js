@@ -13,8 +13,8 @@ export default {
       const body = await handleBody(request, env)
       await handleAuth(request, env, body)
 
-      const blockBytes = new TextEncoder().encode(atob(body.block))
-      const wasabiRsp = await put(env.WASABI_ID, env.WASABI_SECRET, body.key, blockBytes)
+      const contentBytes = new TextEncoder().encode(atob(body.content))
+      const wasabiRsp = await put(env.WASABI_ID, env.WASABI_SECRET, body.key, contentBytes)
       if (wasabiRsp.status !== 200) {
         return Response.json({
           message: 'Bucket upload failed',
@@ -22,7 +22,7 @@ export default {
         }, { status: 424 })
       }
 
-      const l0Rsp = await report(env.REMOTE_ID, env.REMOTE_SECRET, body.key, blockBytes.length)
+      const l0Rsp = await report(env.REMOTE_ID, env.REMOTE_SECRET, body.key, contentBytes.length)
       if (l0Rsp.status !== 204) {
         console.log('WARNING. Failed to report usage')
         console.log(l0Rsp)
@@ -51,16 +51,16 @@ async function handleBody (request, env) {
   } catch (error) {
     throw Response.json({ message: 'Malformed body' }, { status: 400 })
   }
-  if (body.key == null || body.block == null) {
+  if (body.key == null || body.content == null) {
     throw Response.json({
       message: 'Missing required parameter',
-      detail: 'Both key & block are required'
+      detail: 'Both key & content are required'
     }, { status: 400 })
   }
-  if (body.block.length > env.MAX_BYTES) {
+  if (body.content.length > env.MAX_BYTES) {
     throw Response.json({
       message: 'Request too large',
-      detail: 'Max block size is 1MB'
+      detail: 'Max content size is 1MB'
     }, { status: 413 })
   }
   return body
