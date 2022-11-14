@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -52,6 +53,7 @@ public class TokenTest {
     private ApiIdService apiIdService;
 
     @Autowired
+    @Qualifier("tokenJwtDecoder")
     private JwtDecoder jwtDecoder;
 
     @Test

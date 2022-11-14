@@ -26,6 +26,7 @@ import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.math.ec.ECPoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -56,13 +57,13 @@ public class TokenConfig {
     @Bean
     public TokenService tokenService(
             @Autowired TokenRepository repository,
-            @Autowired JWSSigner signer,
+            @Autowired @Qualifier("tokenJwsSigner") JWSSigner signer,
             @Autowired ApiIdService apiIdService,
             @Value("${com.mytiki.l0_storage.token.exp}") long exp){
         return new TokenService(repository, signer, apiIdService, exp);
     }
 
-    @Bean
+    @Bean("tokenJwkSet")
     public JWKSet jwkSet(
             @Value("${com.mytiki.l0_storage.token.private_key}") String pkcs8,
             @Value("${com.mytiki.l0_storage.token.kid}") String kid)
@@ -76,7 +77,7 @@ public class TokenConfig {
         return new JWKSet(keyBuilder.build());
     }
 
-    @Bean
+    @Bean("tokenJwsSigner")
     public JWSSigner jwsSigner(
             @Autowired JWKSet jwkSet,
             @Value("${com.mytiki.l0_storage.token.kid}") String kid)
@@ -84,7 +85,7 @@ public class TokenConfig {
         return new ECDSASigner(jwkSet.getKeyByKeyId(kid).toECKey().toECPrivateKey(), Curve.P_256);
     }
 
-    @Bean
+    @Bean("tokenJwtDecoder")
     public JwtDecoder jwtDecoder(@Autowired JWKSet jwkSet) {
         DefaultJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
         ImmutableJWKSet<SecurityContext> immutableJWKSet = new ImmutableJWKSet<>(jwkSet);
