@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -96,7 +97,8 @@ public class TokenService {
     private String buildPrefix(String uid, String pubKey) {
         try {
             String hashedCustomerId = Base64URL.encode(SHAFacade.sha3_256(uid)).toString();
-            String hashedPubKey = Base64URL.encode(SHAFacade.sha3_256(pubKey)).toString();
+            byte[] pubKeyBytes = Base64.getDecoder().decode(pubKey);
+            String hashedPubKey = Base64URL.encode(SHAFacade.sha3_256(pubKeyBytes)).toString();
             return hashedCustomerId + "/" + hashedPubKey + "/";
         } catch (NoSuchAlgorithmException e) {
             throw new ApiExceptionBuilder(HttpStatus.EXPECTATION_FAILED)
