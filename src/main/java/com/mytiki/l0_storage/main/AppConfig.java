@@ -89,7 +89,7 @@ public class AppConfig {
                                                                         .schema(new JsonSchema()
                                                                                 .type("object")
                                                                                 .addProperty("key", new StringSchema())
-                                                                                .addProperty("block", new StringSchema())
+                                                                                .addProperty("content", new StringSchema())
                                                                         ))))
                                         .responses(new ApiResponses()
                                                 .addApiResponse("201",
