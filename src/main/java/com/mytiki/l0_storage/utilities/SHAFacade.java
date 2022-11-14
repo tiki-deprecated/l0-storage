@@ -14,8 +14,12 @@ import java.security.NoSuchAlgorithmException;
 
 public class SHAFacade {
     public static byte[] sha3_256(String input) throws NoSuchAlgorithmException {
+        return sha3_256(input.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static byte[] sha3_256(byte[] input) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA3-256");
-        return md.digest(input.getBytes(StandardCharsets.UTF_8));
+        return md.digest(input);
     }
 
     public static byte[] hmacSha256(String data, byte[] key) throws NoSuchAlgorithmException, InvalidKeyException {
