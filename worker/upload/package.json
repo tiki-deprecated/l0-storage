@@ -1,6 +1,6 @@
 {
   "name": "l0-storage-upload",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "type": "module",
   "devDependencies": {
     "@babel/core": "^7.20.2",
