@@ -12,7 +12,6 @@ import com.mytiki.l0_storage.utilities.RSAFacade;
 import com.mytiki.l0_storage.utilities.SHAFacade;
 import com.mytiki.spring_rest_api.ApiExceptionBuilder;
 import com.nimbusds.jose.*;
-import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.springframework.http.HttpStatus;
@@ -96,9 +95,15 @@ public class TokenService {
 
     private String buildPrefix(String uid, String pubKey) {
         try {
-            String hashedCustomerId = Base64URL.encode(SHAFacade.sha3_256(uid)).toString();
+            String hashedCustomerId = Base64
+                    .getUrlEncoder()
+                    .withoutPadding()
+                    .encodeToString(SHAFacade.sha3_256(uid));
             byte[] pubKeyBytes = Base64.getDecoder().decode(pubKey);
-            String hashedPubKey = Base64URL.encode(SHAFacade.sha3_256(pubKeyBytes)).toString();
+            String hashedPubKey = Base64
+                    .getUrlEncoder()
+                    .withoutPadding()
+                    .encodeToString(SHAFacade.sha3_256(pubKeyBytes));
             return hashedCustomerId + "/" + hashedPubKey + "/";
         } catch (NoSuchAlgorithmException e) {
             throw new ApiExceptionBuilder(HttpStatus.EXPECTATION_FAILED)
