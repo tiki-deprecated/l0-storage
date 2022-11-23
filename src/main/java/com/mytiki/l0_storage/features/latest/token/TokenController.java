@@ -5,6 +5,7 @@
 
 package com.mytiki.l0_storage.features.latest.token;
 
+import com.mytiki.l0_storage.utilities.Constants;
 import com.mytiki.spring_rest_api.ApiConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,12 +27,16 @@ public class TokenController {
         this.service = service;
     }
 
-    @Operation(summary = "Request a new token", security = @SecurityRequirement(name = "apiId"), responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(
-                    schema = @Schema(implementation = TokenAORsp.class))),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
-            @ApiResponse(responseCode = "417", description = "Expectation Failed", content = @Content)})
+    @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-token-post",
+            summary = "Request Access Token",
+            description = "Request an access token for uploading to storage bucket",
+            security = @SecurityRequirement(name = "apiId"),
+            responses = {
+                @ApiResponse(responseCode = "200", description = "OK",
+                        content = @Content(schema = @Schema(implementation = TokenAORsp.class))),
+                @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+                @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+                @ApiResponse(responseCode = "417", description = "Expectation Failed", content = @Content)})
     @RequestMapping(method = RequestMethod.POST)
     public TokenAORsp post(
             @RequestHeader(name = "x-api-id") String apiId,

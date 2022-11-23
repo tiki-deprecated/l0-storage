@@ -5,6 +5,7 @@
 
 package com.mytiki.l0_storage.features.latest.api_id;
 
+import com.mytiki.l0_storage.utilities.Constants;
 import com.mytiki.spring_rest_api.ApiConstants;
 import com.mytiki.spring_rest_api.ApiPage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +30,10 @@ public class ApiIdController {
         this.service = service;
     }
 
-    @Operation(summary = "Get all provisioned API Ids", security = @SecurityRequirement(name = "jwt"))
+    @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-api-ids-get",
+            summary = "Get API Ids",
+            description = "Get all API Ids for the authorized user",
+            security = @SecurityRequirement(name = "jwt"))
     @RequestMapping(method = RequestMethod.GET)
     public ApiPage<ApiIdAORsp> getAll(
             Authentication authentication,
@@ -38,10 +42,14 @@ public class ApiIdController {
         return service.all(authentication.getName(), page, size);
     }
 
-    @Operation(summary = "Get an API Id's properties", security = @SecurityRequirement(name = "jwt"), responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(
-                    schema = @Schema(implementation = ApiIdAORsp.class))),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
+    @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-api-id-get",
+            summary = "Get API Id",
+            description = "Get the metadata for a single API Id",
+            security = @SecurityRequirement(name = "jwt"),
+            responses = {
+                @ApiResponse(responseCode = "200", description = "OK",
+                        content = @Content(schema = @Schema(implementation = ApiIdAORsp.class))),
+                @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
     @RequestMapping(method = RequestMethod.GET, path = PATH_ID + "/{api-id}")
     public ApiIdAORsp getKey(
             Authentication authentication,
@@ -49,10 +57,14 @@ public class ApiIdController {
         return service.get(apiId, authentication.getName());
     }
 
-    @Operation(summary = "Revoke an API Id (permanent)", security = @SecurityRequirement(name = "jwt"), responses = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(
-                    schema = @Schema(implementation = ApiIdAORsp.class))),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
+    @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-api-id-delete",
+            summary = "Revoke API Id",
+            description = "Careful! This action cannot be undone",
+            security = @SecurityRequirement(name = "jwt"),
+            responses = {
+                @ApiResponse(responseCode = "200", description = "OK",
+                        content = @Content(schema = @Schema(implementation = ApiIdAORsp.class))),
+                @ApiResponse(responseCode = "404", description = "Not Found", content = @Content)})
     @RequestMapping(method = RequestMethod.DELETE, path = PATH_ID + "/{api-id}")
     public ApiIdAORsp deleteKey(
             Authentication authentication,
@@ -60,7 +72,10 @@ public class ApiIdController {
         return service.revoke(apiId, authentication.getName());
     }
 
-    @Operation(summary = "Request a new API Id", security = @SecurityRequirement(name = "jwt"))
+    @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-api-id-post",
+            summary = "Create an API Id",
+            description = "Request a new API Id for the authorized user",
+            security = @SecurityRequirement(name = "jwt"))
     @RequestMapping(method = RequestMethod.POST, path = PATH_NEW)
     public ApiIdAORsp postNew(Authentication authentication){
         return service.register(authentication.getName());
