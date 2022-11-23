@@ -13,8 +13,9 @@ paths:
     post:
       tags:
       - STORAGE
-      summary: Upload a block
-      operationId: put
+      summary: Upload Content
+      description: Upload a block/pub.key to storage bucket
+      operationId: l0-storage-upload-post
       requestBody:
         content:
           application/json:
@@ -42,8 +43,9 @@ paths:
     post:
       tags:
       - STORAGE
-      summary: Request a new token
-      operationId: post
+      summary: Request Access Token
+      description: Request an access token for uploading to storage bucket
+      operationId: l0-storage-token-post
       parameters:
       - name: x-api-id
         in: header
@@ -75,8 +77,9 @@ paths:
     post:
       tags:
       - STORAGE
-      summary: Submit a usage report
-      operationId: post_1
+      summary: Report Usage
+      description: Submit a usage report (handled automatically by Upload)
+      operationId: l0-storage-report-post
       requestBody:
         content:
           application/json:
@@ -94,8 +97,9 @@ paths:
     post:
       tags:
       - API ID
-      summary: Request a new API Id
-      operationId: postNew
+      summary: Create an API Id
+      description: Request a new API Id for the authorized user
+      operationId: l0-storage-api-id-post
       responses:
         "200":
           description: OK
@@ -109,7 +113,9 @@ paths:
     get:
       tags:
       - HEALTH
-      operationId: get
+      summary: Health Check
+      description: Get service status
+      operationId: l0-storage-health-get
       responses:
         "200":
           description: OK
@@ -123,8 +129,9 @@ paths:
     get:
       tags:
       - API ID
-      summary: Get all provisioned API Ids
-      operationId: getAll
+      summary: Get API Ids
+      description: Get all API Ids for the authorized user
+      operationId: l0-storage-api-ids-get
       parameters:
       - name: page
         in: query
@@ -153,8 +160,9 @@ paths:
     get:
       tags:
       - API ID
-      summary: Get an API Id's properties
-      operationId: getKey
+      summary: Get API Id
+      description: Get the metadata for a single API Id
+      operationId: l0-storage-api-id-get
       parameters:
       - name: api-id
         in: path
@@ -175,8 +183,9 @@ paths:
     delete:
       tags:
       - API ID
-      summary: Revoke an API Id (permanent)
-      operationId: deleteKey
+      summary: Revoke API Id
+      description: Careful! This action cannot be undone
+      operationId: l0-storage-api-id-delete
       parameters:
       - name: api-id
         in: path

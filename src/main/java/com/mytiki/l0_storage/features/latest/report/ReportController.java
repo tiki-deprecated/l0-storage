@@ -5,6 +5,7 @@
 
 package com.mytiki.l0_storage.features.latest.report;
 
+import com.mytiki.l0_storage.utilities.Constants;
 import com.mytiki.spring_rest_api.ApiConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,9 +30,13 @@ public class ReportController {
     }
 
     @RolesAllowed("REMOTE")
-    @Operation(summary = "Submit a usage report", security = @SecurityRequirement(name = "remote"), responses = {
-            @ApiResponse(responseCode = "204", description = "No Content", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)})
+    @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-report-post",
+            summary = "Report Usage",
+            description = "Submit a usage report (handled automatically by Upload)",
+            security = @SecurityRequirement(name = "remote"),
+            responses = {
+                @ApiResponse(responseCode = "204", description = "No Content", content = @Content),
+                @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content)})
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void post(@RequestBody ReportAOReq body){

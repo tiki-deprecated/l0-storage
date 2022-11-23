@@ -8,6 +8,7 @@ package com.mytiki.l0_storage.main;
 import com.mytiki.l0_storage.features.latest.FeaturesConfig;
 import com.mytiki.l0_storage.health.HealthConfig;
 import com.mytiki.l0_storage.security.SecurityConfig;
+import com.mytiki.l0_storage.utilities.Constants;
 import com.mytiki.spring_rest_api.ApiExceptionHandlerDefault;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -80,8 +81,9 @@ public class AppConfig {
                         new PathItem().post(
                                 new Operation()
                                         .tags(Collections.singletonList("STORAGE"))
-                                        .operationId("put")
-                                        .summary("Upload a block")
+                                        .operationId(Constants.PROJECT_DASH_PATH +  "-upload-post")
+                                        .summary("Upload Content")
+                                        .description("Upload a block/pub.key to storage bucket")
                                         .requestBody(new RequestBody()
                                                 .content(new Content()
                                                         .addMediaType("application/json",
