@@ -1,5 +1,6 @@
+###  [🍍 Console](https://console.mytiki.com) &nbsp; ⏐ &nbsp; [📚 Docs](https://docs.mytiki.com)
+
 # Layer 0 Storage Service
-### [📚 Docs](https://docs.mytiki.com) &nbsp;&nbsp;[💬 Discord](https://discord.gg/tiki)
 
 Long-term (10+ years) immutable (WORM) low-frequency backup via a shared, cloud-hosted bucket. Used by the TIKI 
 blockchain ([tiki-sdk-dart](https://github.com/tiki/tiki-sdk-dart)) to back up and restore blocks in the event of 
