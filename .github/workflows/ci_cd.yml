@@ -179,7 +179,7 @@ jobs:
 
   publish_docs:
     runs-on: ubuntu-latest
-    environment: Production
+    needs: [sentry_release]
     steps:
       - name: Checkout
         uses: actions/checkout@v2.1.1
