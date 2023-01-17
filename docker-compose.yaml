@@ -28,7 +28,7 @@ services:
       - db-data:/var/lib/postgresql/data
       - "./database:/docker-entrypoint-initdb.d"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U l0_storage_service -d l0_storage"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
