@@ -5,9 +5,9 @@ services:
   auth:
     image: joseluisq/static-web-server:2.14.1
     ports:
-      - 8000:8000
+      - 8000:80
     volumes:
-    - ./jwks.json:/.well-known/jwks.json
+    - ./jwks.json:/public/jwks.json
     
   # REST API service
   api:
