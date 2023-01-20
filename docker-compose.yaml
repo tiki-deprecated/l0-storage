@@ -4,7 +4,8 @@ services:
   # Auth service
   auth:
     image: joseluisq/static-web-server:2.14.1
-    # TODO: add file path
+    volumes:
+    - jwks.json:public/
     
   # REST API service
   api:
@@ -49,7 +50,7 @@ services:
     build:
       context: worker/
       args: []
-    environment: {}
+    environment:
       L0_STORAGE_ENDPOINT: api:10502/api/latest/upload
       REMOTE_ID: ID-FOR-LOCAL-CLOUDFLARE-WORKER-CONTAINER
       REMOTE_SECRET: SECRET-FOR-LOCAL-CLOUDFLARE-WORKER-CONTAINER
