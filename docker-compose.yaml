@@ -17,7 +17,7 @@ services:
     environment: [] 
     ports:
       - 8000:8000
-      - 10502:10502
+      - 10507:10507
     volumes:
       - ./:/app
     depends_on:
@@ -50,6 +50,15 @@ services:
       context: worker/
       args: []
     environment: {}
+      L0_STORAGE_ENDPOINT: api:10502/api/latest/upload
+      REMOTE_ID: ID-FOR-LOCAL-CLOUDFLARE-WORKER-CONTAINER
+      REMOTE_SECRET: SECRET-FOR-LOCAL-CLOUDFLARE-WORKER-CONTAINER
+      WASABI_ENDPOINT: storage-container-PLACEHOLDER
+      WASABI_ID: ADD-THIS-FOR-MINIO
+      WASABI_SECRET: ADD-THIS-TOO
+    ports:
+      - 10507:10507
+
 
 volumes:
   db-data:
