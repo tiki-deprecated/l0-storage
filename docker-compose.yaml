@@ -4,8 +4,10 @@ services:
   # Auth service
   auth:
     image: joseluisq/static-web-server:2.14.1
+    ports:
+      - 8000:8000
     volumes:
-    - jwks.json:public/
+    - ./jwks.json:/public/jwks.json
     
   # REST API service
   api:
@@ -17,7 +19,6 @@ services:
         - JAR_FILE=target/*.jar
     environment: [] 
     ports:
-      - 8000:8000
       - 10507:10507
     volumes:
       - ./:/app
@@ -51,7 +52,7 @@ services:
       context: worker/
       args: []
     environment:
-      L0_STORAGE_ENDPOINT: api:10502/api/latest/upload
+      L0_STORAGE_ENDPOINT: api:10507/api/latest/upload
       REMOTE_ID: ID-FOR-LOCAL-CLOUDFLARE-WORKER-CONTAINER
       REMOTE_SECRET: SECRET-FOR-LOCAL-CLOUDFLARE-WORKER-CONTAINER
       WASABI_ENDPOINT: storage-container-PLACEHOLDER
@@ -59,7 +60,6 @@ services:
       WASABI_SECRET: ADD-THIS-TOO
     ports:
       - 10507:10507
-
 
 volumes:
   db-data:
