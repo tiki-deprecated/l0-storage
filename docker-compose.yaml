@@ -3,11 +3,13 @@ version: '3'
 services:
   # Auth service
   auth:
-    image: joseluisq/static-web-server:2.14.1
+    # image: joseluisq/static-web-server:2.14.1
+    build:
+      context: docker/auth
     ports:
       - 8000:80
-    volumes:
-    - ./jwks.json:/public/jwks.json
+    environment:
+      SERVER_LOG_LEVEL: info
     
   # REST API service
   api:
