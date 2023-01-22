@@ -6,8 +6,8 @@
 package com.mytiki.l0_storage.features.latest.token;
 
 import com.mytiki.l0_storage.features.latest.api_id.ApiIdDO;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.UUID;

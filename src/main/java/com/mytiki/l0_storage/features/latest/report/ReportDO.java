@@ -5,7 +5,8 @@
 
 package com.mytiki.l0_storage.features.latest.report;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
