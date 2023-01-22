@@ -13,7 +13,7 @@ export default {
       const body = await handleBody(request, env)
       await handleAuth(request, env, body)
 
-      const contentBytes = new TextEncoder().encode(atob(body.content))
+      const contentBytes = Uint8Array.from(Buffer.from(body.content, 'base64'))
       const wasabiRsp = await put(env.WASABI_ID, env.WASABI_SECRET, body.key, contentBytes)
       if (wasabiRsp.status !== 200) {
         return Response.json({
