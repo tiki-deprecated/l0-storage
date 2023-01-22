@@ -30,11 +30,13 @@ hs_err_pid*
 /target/
 
 # Property files
-application-local*.properties
-!application-local*.template.properties
+application-local.properties
 
 # Fuckin Macs
 .DS_Store
 
 # Gradle
 .gradle
+
+# Maven Wrapper Jar
+.mvn/wrapper/maven-wrapper.jar
