@@ -53,7 +53,7 @@ public class ReportTest {
         assertEquals(1, reports.size());
         assertNotNull(reports.get(0).getCreated());
         assertEquals(sizeBytes, reports.get(0).getSizeBytes());
-        assertNotNull(reports.get(0).getRid());
+        assertNotNull(reports.get(0).getId());
     }
 
     @Test

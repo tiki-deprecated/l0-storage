@@ -33,6 +33,8 @@ public class TokenService {
     }
 
     public TokenAORsp issue(String appId, TokenAOReq req){
+        if(appId == null)
+            throw new ApiExceptionBuilder(HttpStatus.FORBIDDEN).message("No API Id").build();
         guardForSignature(req);
         String prefix = buildPrefix(appId, req.getPubKey());
         ZonedDateTime now = ZonedDateTime.now();
