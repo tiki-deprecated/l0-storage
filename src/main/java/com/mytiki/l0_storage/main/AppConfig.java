@@ -67,11 +67,6 @@ public class AppConfig {
                                 new SecurityScheme()
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("basic"))
-                        .addSecuritySchemes("apiId",
-                                new SecurityScheme()
-                                        .type(SecurityScheme.Type.APIKEY)
-                                        .in(SecurityScheme.In.HEADER)
-                                        .name("X-API-ID"))
                         .addSecuritySchemes("jwt",
                                 new SecurityScheme()
                                         .type(SecurityScheme.Type.HTTP)

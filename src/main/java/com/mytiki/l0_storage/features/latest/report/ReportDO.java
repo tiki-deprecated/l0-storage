@@ -14,20 +14,20 @@ import java.time.ZonedDateTime;
 @Table(name = "report")
 public class ReportDO implements Serializable {
 
-    private Long rid;
+    private Long id;
     private String urnPrefix;
     private Long sizeBytes;
     private ZonedDateTime created;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rid")
-    public Long getRid() {
-        return rid;
+    @Column(name = "report_id")
+    public Long getId() {
+        return id;
     }
 
-    public void setRid(Long usageId) {
-        this.rid = usageId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Column(name = "urn_prefix")

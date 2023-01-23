@@ -5,7 +5,6 @@
 
 package com.mytiki.l0_storage;
 
-import com.mytiki.l0_storage.features.latest.api_id.ApiIdService;
 import com.mytiki.l0_storage.features.latest.token.TokenAOReq;
 import com.mytiki.l0_storage.features.latest.token.TokenAORsp;
 import com.mytiki.l0_storage.features.latest.token.TokenService;
@@ -50,17 +49,12 @@ public class TokenTest {
     private TokenService service;
 
     @Autowired
-    private ApiIdService apiIdService;
-
-    @Autowired
     @Qualifier("tokenJwtDecoder")
     private JwtDecoder jwtDecoder;
 
     @Test
     public void Test_Issue_Success() throws JOSEException, CryptoException {
-        String uid = UUID.randomUUID().toString();
-        String apiId = apiIdService.register(uid).getApiId();
-
+        String appId = UUID.randomUUID().toString();
         RSAKey rsaKey =  new RSAKeyGenerator(RSAKeyGenerator.MIN_KEY_SIZE_BITS).generate();
         RSAPrivateKey privateKey = rsaKey.toRSAPrivateKey();
         String stringToSign = "dummy";
@@ -68,7 +62,7 @@ public class TokenTest {
         TokenAOReq req = new TokenAOReq(
                 Base64.encodeBase64String(rsaKey.toPublicKey().getEncoded()),
                 sign(privateKey, stringToSign), stringToSign);
-        TokenAORsp rsp = service.issue(apiId, req);
+        TokenAORsp rsp = service.issue(appId, req);
 
         assertNotNull(rsp.getToken());
         assertNotNull(rsp.getUrnPrefix());
@@ -84,9 +78,7 @@ public class TokenTest {
 
     @Test
     public void Test_Issue_BadSignature_Failure() throws JOSEException, CryptoException {
-        String uid = UUID.randomUUID().toString();
-        String apiId = apiIdService.register(uid).getApiId();
-
+        String appId = UUID.randomUUID().toString();
         RSAKey rsaKey =  new RSAKeyGenerator(RSAKeyGenerator.MIN_KEY_SIZE_BITS).generate();
         RSAPrivateKey privateKey = rsaKey.toRSAPrivateKey();
         String stringToSign = "dummy";
@@ -95,15 +87,13 @@ public class TokenTest {
                 Base64.encodeBase64String(rsaKey.toPublicKey().getEncoded()),
                 sign(privateKey, UUID.randomUUID().toString()), stringToSign);
 
-        ApiException ex = assertThrows(ApiException.class, () -> service.issue(apiId, req));
+        ApiException ex = assertThrows(ApiException.class, () -> service.issue(appId, req));
         assertEquals(ex.getHttpStatus(), HttpStatus.BAD_REQUEST);
     }
 
     @Test
     public void Test_Issue_BadKey_Failure() throws JOSEException, CryptoException {
-        String uid = UUID.randomUUID().toString();
-        String apiId = apiIdService.register(uid).getApiId();
-
+        String appId = UUID.randomUUID().toString();
         RSAKey rsaKey1 =  new RSAKeyGenerator(RSAKeyGenerator.MIN_KEY_SIZE_BITS).generate();
         RSAKey rsaKey2 =  new RSAKeyGenerator(RSAKeyGenerator.MIN_KEY_SIZE_BITS).generate();
         RSAPrivateKey privateKey = rsaKey1.toRSAPrivateKey();
@@ -113,13 +103,12 @@ public class TokenTest {
                 Base64.encodeBase64String(rsaKey2.toPublicKey().getEncoded()),
                 sign(privateKey, stringToSign), stringToSign);
 
-        ApiException ex = assertThrows(ApiException.class, () -> service.issue(apiId, req));
+        ApiException ex = assertThrows(ApiException.class, () -> service.issue(appId, req));
         assertEquals(ex.getHttpStatus(), HttpStatus.BAD_REQUEST);
     }
 
     @Test
     public void Test_Issue_BadApiId_Failure() throws JOSEException, CryptoException {
-        String apiId = UUID.randomUUID().toString();
         RSAKey rsaKey =  new RSAKeyGenerator(RSAKeyGenerator.MIN_KEY_SIZE_BITS).generate();
         RSAPrivateKey privateKey = rsaKey.toRSAPrivateKey();
         String stringToSign = "dummy";
@@ -128,7 +117,7 @@ public class TokenTest {
                 Base64.encodeBase64String(rsaKey.toPublicKey().getEncoded()),
                 sign(privateKey, stringToSign), stringToSign);
 
-        ApiException ex = assertThrows(ApiException.class, () -> service.issue(apiId, req));
+        ApiException ex = assertThrows(ApiException.class, () -> service.issue(null, req));
         assertEquals(ex.getHttpStatus(), HttpStatus.FORBIDDEN);
     }
 

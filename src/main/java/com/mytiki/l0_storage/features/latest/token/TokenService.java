@@ -5,8 +5,6 @@
 
 package com.mytiki.l0_storage.features.latest.token;
 
-import com.mytiki.l0_storage.features.latest.api_id.ApiIdDO;
-import com.mytiki.l0_storage.features.latest.api_id.ApiIdService;
 import com.mytiki.l0_storage.utilities.Constants;
 import com.mytiki.l0_storage.utilities.RSAFacade;
 import com.mytiki.l0_storage.utilities.SHAFacade;
@@ -21,56 +19,33 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.time.ZonedDateTime;
 import java.util.Base64;
-import java.util.Optional;
 import java.util.UUID;
 
 public class TokenService {
-    public static final int POLICY_EXPIRATION_HOURS = 1;
     private final TokenRepository repository;
     private final JWSSigner signer;
     private final long expSeconds;
 
-    private final ApiIdService apiIdService;
-
-    public TokenService(
-            TokenRepository repository,
-            JWSSigner signer,
-            ApiIdService apiIdService,
-            long expSeconds) {
+    public TokenService(TokenRepository repository, JWSSigner signer, long expSeconds) {
         this.repository = repository;
         this.signer = signer;
-        this.apiIdService = apiIdService;
         this.expSeconds = expSeconds;
     }
 
-    public TokenAORsp issue(String apiId, TokenAOReq req){
-        String uid = guardForApiId(apiId);
+    public TokenAORsp issue(String appId, TokenAOReq req){
+        if(appId == null)
+            throw new ApiExceptionBuilder(HttpStatus.FORBIDDEN).message("No API Id").build();
         guardForSignature(req);
-        String prefix = buildPrefix(uid, req.getPubKey());
+        String prefix = buildPrefix(appId, req.getPubKey());
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime exp = now.plusSeconds(expSeconds);
-        TokenDO tokenDO = log(apiId, prefix, now);
-        String token = jwt(tokenDO.getTid().toString(), prefix, now, exp);
+        TokenDO tokenDO = log(appId, prefix, now);
+        String token = jwt(tokenDO.getId().toString(), prefix, now, exp);
         TokenAORsp rsp = new TokenAORsp();
         rsp.setToken(token);
         rsp.setExpires(exp);
         rsp.setUrnPrefix(prefix);
         return rsp;
-    }
-
-    private String guardForApiId(String apiId){
-        Optional<ApiIdDO> apiIdDO = apiIdService.find(apiId);
-        if(apiIdDO.isEmpty())
-            throw new ApiExceptionBuilder(HttpStatus.FORBIDDEN)
-                    .message("Invalid API id")
-                    .detail("API Id does not exist")
-                    .build();
-        if(!apiIdDO.get().getValid())
-            throw new ApiExceptionBuilder(HttpStatus.FORBIDDEN)
-                    .message("Invalid API id")
-                    .detail("API Id has been revoked")
-                    .build();
-        return apiIdDO.get().getUid();
     }
 
     private void guardForSignature(TokenAOReq req){
@@ -93,18 +68,14 @@ public class TokenService {
         }
     }
 
-    private String buildPrefix(String uid, String pubKey) {
+    private String buildPrefix(String appId, String pubKey) {
         try {
-            String hashedCustomerId = Base64
-                    .getUrlEncoder()
-                    .withoutPadding()
-                    .encodeToString(SHAFacade.sha3_256(uid));
             byte[] pubKeyBytes = Base64.getDecoder().decode(pubKey);
             String hashedPubKey = Base64
                     .getUrlEncoder()
                     .withoutPadding()
                     .encodeToString(SHAFacade.sha3_256(pubKeyBytes));
-            return hashedCustomerId + "/" + hashedPubKey + "/";
+            return appId + "/" + hashedPubKey + "/";
         } catch (NoSuchAlgorithmException e) {
             throw new ApiExceptionBuilder(HttpStatus.EXPECTATION_FAILED)
                     .message(e.getMessage())
@@ -113,14 +84,12 @@ public class TokenService {
         }
     }
 
-    private TokenDO log(String apiId, String urnPrefix, ZonedDateTime now){
-        ApiIdDO apiIdDO = new ApiIdDO();
-        apiIdDO.setAid(UUID.fromString(apiId));
+    private TokenDO log(String appId, String urnPrefix, ZonedDateTime now){
         TokenDO tokenDO = new TokenDO();
-        tokenDO.setTid(UUID.randomUUID());
+        tokenDO.setId(UUID.randomUUID());
         tokenDO.setCreated(now);
         tokenDO.setUrnPrefix(urnPrefix);
-        tokenDO.setApiId(apiIdDO);
+        tokenDO.setAppId(UUID.fromString(appId));
         return repository.save(tokenDO);
     }
 

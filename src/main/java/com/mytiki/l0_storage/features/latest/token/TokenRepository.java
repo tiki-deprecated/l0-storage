@@ -13,5 +13,5 @@ import java.util.UUID;
 
 @Repository
 public interface TokenRepository extends JpaRepository<TokenDO, UUID> {
-    List<TokenDO> findByApiIdAid(UUID aid);
+    List<TokenDO> findByAppId(UUID appId);
 }
