@@ -31,6 +31,8 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.net.URL;
 import java.util.*;
@@ -38,7 +40,7 @@ import java.util.function.Predicate;
 
 @EnableWebSecurity
 public class SecurityConfig{
-    private static final String REMOTE_WORKER_ROLE = "REMOTE";
+    public static final String REMOTE_WORKER_ROLE = "REMOTE";
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final String remoteWorkerId;
@@ -89,9 +91,15 @@ public class SecurityConfig{
                 .anonymous().and()
                 .cors()
                 .configurationSource(SecurityConstants.corsConfigurationSource()).and()
+                .csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers(
+                        new AntPathRequestMatcher(ReportController.PATH_CONTROLLER, HttpMethod.POST.name()),
+                        new AntPathRequestMatcher(TokenController.PATH_CONTROLLER, HttpMethod.POST.name())
+                ).and()
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, ApiConstants.HEALTH_ROUTE, Constants.API_DOCS_PATH ).permitAll()
-                .requestMatchers(HttpMethod.POST, TokenController.PATH_CONTROLLER).permitAll()
+                .requestMatchers(HttpMethod.POST, TokenController.PATH_CONTROLLER).permitAll() //does not belong here.
                 .requestMatchers(HttpMethod.POST, ReportController.PATH_CONTROLLER).hasRole(REMOTE_WORKER_ROLE)
                 .anyRequest().authenticated().and()
                 .httpBasic()
