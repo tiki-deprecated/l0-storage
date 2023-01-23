@@ -44,7 +44,7 @@ jobs:
           distribution: 'zulu'
 
       - name: Install CLI
-        uses: dopplerhq/cli-action@v1
+        uses: dopplerhq/cli-action@v2
 
       - name: Install PostgreSQL client
         run: |
@@ -70,7 +70,7 @@ jobs:
 
       - name: Set Worker Version
         id: package_version
-        uses: KageKirin/set-node-package-version@v0
+        uses: KageKirin/set-node-package-version@v1
         with:
           file: 'worker/upload/package.json'
           version: ${{ steps.bump-version.outputs.new-version }}
@@ -107,7 +107,7 @@ jobs:
           distribution: 'zulu'
 
       - name: Install CLI
-        uses: dopplerhq/cli-action@v1
+        uses: dopplerhq/cli-action@v2
 
       - name: Install PostgreSQL client
         run: |
@@ -133,7 +133,7 @@ jobs:
         run: doctl registry login --expiry-seconds 600
 
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
           file: prod.dockerfile
@@ -159,7 +159,7 @@ jobs:
           EOF
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
