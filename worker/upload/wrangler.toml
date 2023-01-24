@@ -9,13 +9,28 @@ routes = [
 compatibility_date = "2022-09-12"
 
 [vars]
-PUBKEY = '{ "kty": "EC", "use": "sig", "crv": "P-256", "kid": "4570d35d-c0f6-44ff-a40b-350264bb6e2f", "x": "xgAA9ptVg940RBe8_nPmdzYrwUuU2gIeCaRe2v6uVL8", "y": "leiAoSoJvGSUjRIL5WvL9GIYV6YJ_VzbrP8838Y0h7M" }'
 MAX_BYTES = 1000000
+CLOCK_SKEW_MINUTES = 5
+
+L0_STORAGE_URL = "https://storage.l0.mytiki.com/api/latest/report"
+L0_STORAGE_JWT_JWKS = '{ "kty": "EC", "use": "sig", "crv": "P-256", "kid": "4570d35d-c0f6-44ff-a40b-350264bb6e2f", "x": "xgAA9ptVg940RBe8_nPmdzYrwUuU2gIeCaRe2v6uVL8", "y": "leiAoSoJvGSUjRIL5WvL9GIYV6YJ_VzbrP8838Y0h7M" }'
+L0_STORAGE_JWT_ALG = "ECDSA"
+L0_STORAGE_JWT_CRV = "P-256"
+L0_STORAGE_JWT_HASH = "SHA-256"
+L0_STORAGE_JWT_CLAIMS = "iss,iat,sub,jti,exp"
+L0_STORAGE_JWT_ISS = "com.mytiki.l0_storage"
+
+L0_INDEX_URL = "https://index.l0.mytiki.com/api/latest/report"
+L0_INDEX_BUCKET = "https://bucket.storage.l0.mytiki.com"
+
+WASABI_BUCKET = "bucket.storage.l0.mytiki.com"
+WASABI_REGION = "us-central-1"
+WASABI_SERVICE = "s3"
 
 # The necessary secrets are:
 # - REMOTE_ID
 # - REMOTE_SECRET
 # - WASABI_ID
 # - WASABI_SECRET
-
-# Run `echo <VALUE> | wrangler secret put <NAME>` for each of these
+# - INDEX_ID
+# - INDEX_SECRET

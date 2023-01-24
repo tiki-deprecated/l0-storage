@@ -4,9 +4,6 @@
  */
 
 const enc = new TextEncoder()
-const bucket = 'bucket.storage.l0.mytiki.com'
-const region = 'us-central-1'
-const service = 's3'
 
 export {
   put,
@@ -20,32 +17,30 @@ export {
   hmacSha
 }
 
-async function put (id, secret, key, file) {
-  if (!key.startsWith('/')) key = '/' + key
+async function put (key, req, config) {
+  if (!req.key.startsWith('/')) req.key = '/' + req.key
   const date = new Date()
-  const hashedPayload = buf2hex(await crypto.subtle.digest('SHA-256', file))
+  const hashedPayload = buf2hex(await crypto.subtle.digest('SHA-256', req.file))
   const signedHeaders = 'host;x-amz-content-sha256;x-amz-date'
-  const canonicalHeaders = 'host:' + bucket + '\n' +
+  const canonicalHeaders = 'host:' + config.bucket + '\n' +
       'x-amz-content-sha256:' + hashedPayload + '\n' +
       'x-amz-date:' + date2timestamp(date) + '\n'
-  const cReq = await canonicalRequest('PUT', key, undefined,
+  const cReq = await canonicalRequest('PUT', req.key, undefined,
     canonicalHeaders, signedHeaders, hashedPayload)
-  const s2s = await stringToSign(date, region, service, cReq)
-  const signKey = await signingKey(secret, date, region, service)
+  const s2s = await stringToSign(date, config.region, config.service, cReq)
+  const signKey = await signingKey(key.secret, date, config.region, config.service)
   const signature = buf2hex(await hmacSha(enc.encode(s2s), signKey))
-  const auth = authorization(id, date, region, service, signedHeaders, signature)
+  const auth = authorization(key.id, date, config.region, config.service, signedHeaders, signature)
 
-  return await fetch(
-    new Request('https://' + bucket + key, {
-      method: 'PUT',
-      headers: {
-        Authorization: auth,
-        'x-amz-date': date2timestamp(date),
-        'x-amz-content-sha256': hashedPayload
-      },
-      body: file
-    })
-  )
+  return fetch('https://' + config.bucket + req.key, {
+    method: 'PUT',
+    headers: {
+      Authorization: auth,
+      'x-amz-date': date2timestamp(date),
+      'x-amz-content-sha256': hashedPayload
+    },
+    body: req.file
+  })
 }
 
 function canonicalRequest (httpMethod, canonicalUri, canonicalQueryString, canonicalHeaders, signedHeaders, hashedPayload) {

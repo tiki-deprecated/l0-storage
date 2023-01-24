@@ -3,8 +3,10 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-import { decode, guardClaims, report } from './l0Storage.js'
-import { put } from './wasabi.js'
+import * as l0Storage from './l0Storage.js'
+import * as wasabi from './wasabi.js'
+import * as b64 from './b64.js'
+import * as l0Index from './l0Index.js'
 
 export default {
   async fetch (request, env, context) {
@@ -12,9 +14,16 @@ export default {
       handleMethod(request)
       const body = await handleBody(request, env)
       await handleAuth(request, env, body)
+      const contentBytes = b64.decode(body.content)
 
-      const contentBytes = Uint8Array.from(Buffer.from(body.content, 'base64'))
-      const wasabiRsp = await put(env.WASABI_ID, env.WASABI_SECRET, body.key, contentBytes)
+      const wasabiRsp = await wasabi.put(
+        { id: env.WASABI_ID, secret: env.WASABI_SECRET },
+        { key: body.key, file: contentBytes },
+        { bucket: env.WASABI_BUCKET, region: env.WASABI_REGION, service: env.WASABI_SERVICE })
+        .catch((error) => {
+          console.log(error)
+        })
+      const versionId = wasabiRsp.headers.get('x-amz-version-id')
       if (wasabiRsp.status !== 200) {
         return Response.json({
           message: 'Bucket upload failed',
@@ -22,10 +31,30 @@ export default {
         }, { status: 424 })
       }
 
-      const l0Rsp = await report(env.REMOTE_ID, env.REMOTE_SECRET, body.key, contentBytes.length)
-      if (l0Rsp.status !== 204) {
+      const l0StorageRsp = await l0Storage.report(
+        env.L0_STORAGE_URL,
+        { id: env.REMOTE_ID, secret: env.REMOTE_SECRET },
+        { path: body.key, sizeBytes: contentBytes.byteLength })
+        .catch((error) => {
+          console.log(error)
+        })
+      if (l0StorageRsp.status !== 204) {
         console.log('WARNING. Failed to report usage')
-        console.log(l0Rsp)
+        console.log(await l0StorageRsp.json())
+      }
+
+      if (body.key.endsWith('.block')) {
+        const l0IndexRsp = await l0Index.report(
+          { id: env.INDEX_ID, secret: env.INDEX_SECRET },
+          { path: body.key, block: contentBytes, version: versionId },
+          { bucket: env.L0_INDEX_BUCKET, url: env.L0_INDEX_URL })
+          .catch((error) => {
+            console.log(error)
+          })
+        if (l0IndexRsp.status !== 204) {
+          console.log('WARNING. Failed to report index')
+          console.log(await l0IndexRsp.json())
+        }
       }
 
       return new Response('', { status: 201, headers: { 'Content-Type': 'application/json' } })
@@ -41,7 +70,11 @@ export default {
 }
 
 function handleMethod (request) {
-  if (request.method !== 'PUT') { throw Response.json({ message: 'Not Allowed' }, { status: 405 }) }
+  if (request.method !== 'PUT') {
+    throw Response.json(
+      { message: 'Not Allowed' },
+      { status: 405 })
+  }
 }
 
 async function handleBody (request, env) {
@@ -70,8 +103,16 @@ async function handleAuth (request, env, body) {
   let claims
   try {
     const token = request.headers.get('authorization').replace('Bearer ', '')
-    claims = await decode(token, JSON.parse(env.PUBKEY))
-    guardClaims(claims)
+    claims = await l0Storage.decode(token, JSON.parse(env.L0_STORAGE_JWT_JWKS), {
+      name: env.L0_STORAGE_JWT_ALG,
+      namedCurve: env.L0_STORAGE_JWT_CRV,
+      hash: env.L0_STORAGE_JWT_HASH
+    })
+    l0Storage.guardClaims(claims, {
+      claims: env.L0_STORAGE_JWT_CLAIMS,
+      iss: env.L0_STORAGE_JWT_ISS,
+      clockSkew: env.CLOCK_SKEW_MINUTES
+    })
   } catch (error) {
     throw Response.json({
       message: 'Failed to authorize request',
