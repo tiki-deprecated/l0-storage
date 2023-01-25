@@ -6,7 +6,7 @@
 import { SHA3 } from 'sha3'
 import * as b64 from './b64.js'
 
-export { report }
+export { report, decodeBlock, decodeCompactSize, decodeBigInt, txnList }
 
 async function report (key, body, config) {
   const split = body.path.split('/')
@@ -80,17 +80,17 @@ function decodeBigInt (bytes) {
   const negative = bytes.length > 0 && ((bytes[0] & 0x80) === 0x80)
   let result
   if (bytes.length === 1) {
-    result = bytes[0]
+    result = BigInt(bytes[0])
   } else {
-    result = 0
+    result = 0n
     for (let i = 0; i < bytes.length; i++) {
-      const item = bytes[bytes.length - i - 1] & 0xFF
-      result |= item << (8 * i)
+      const item = BigInt(bytes[bytes.length - i - 1] & 0xFF)
+      result |= item << (8n * BigInt(i))
     }
   }
-  return result !== 0
+  return result !== 0n
     ? negative
-      ? BigInt(result * -1)
-      : BigInt(result)
+      ? BigInt.asIntN(8 * bytes.length, result)
+      : result
     : BigInt(0)
 }

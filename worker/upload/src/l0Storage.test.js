@@ -14,7 +14,11 @@ const testExp = 1668295557
 const testJti = '72eaa63a-193d-4550-ba3c-51abf29abb6d'
 
 test('Decode Success', async () => {
-  const claims = await l0Storage.decode(testJwt, JSON.parse(testKey))
+  const claims = await l0Storage.decode(testJwt, JSON.parse(testKey), {
+    name: 'ECDSA',
+    namedCurve: 'P-256',
+    hash: 'SHA-256'
+  })
   expect(claims.iss).toBe(testIss)
   expect(claims.iat).toBe(testIat)
   expect(claims.sub).toBe(testSub)
@@ -26,7 +30,12 @@ test('Decode Failure Bad JWT', () => {
   expect(async () =>
     await l0Storage.decode(
       testJwt.replace('I', 'a'),
-      JSON.parse(testKey)
+      JSON.parse(testKey),
+      {
+        name: 'ECDSA',
+        namedCurve: 'P-256',
+        hash: 'SHA-256'
+      }
     ).toThrow('Failed to validate JWT'))
 })
 
@@ -34,7 +43,12 @@ test('Decode Failure Bad Key', () => {
   expect(async () =>
     await l0Storage.decode(
       testJwt,
-      JSON.parse(testKey.replace('8', '9'))
+      JSON.parse(testKey.replace('8', '9')),
+      {
+        name: 'ECDSA',
+        namedCurve: 'P-256',
+        hash: 'SHA-256'
+      }
     ).toThrow('Failed to validate JWT'))
 })
 
@@ -46,7 +60,11 @@ test('GuardClaims Success', () => {
     iat: 1668291957,
     jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
   }
-  l0Storage.guardClaims(claims)
+  l0Storage.guardClaims(claims, {
+    claims: 'iss,iat,sub,jti,exp',
+    iss: 'com.mytiki.l0_storage',
+    clockSkew: 5
+  })
 })
 
 test('GuardClaims Missing Claim Failure', () => {
@@ -56,7 +74,11 @@ test('GuardClaims Missing Claim Failure', () => {
     iat: 1668291957,
     jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
   }
-  expect(() => l0Storage.guardClaims(claims)).toThrow('Missing required claim: sub')
+  expect(() => l0Storage.guardClaims(claims, {
+    claims: 'iss,iat,sub,jti,exp',
+    iss: 'com.mytiki.l0_storage',
+    clockSkew: 5
+  })).toThrow('Missing required claim: sub')
 })
 
 test('GuardClaims Exp Failure', () => {
@@ -67,7 +89,11 @@ test('GuardClaims Exp Failure', () => {
     iat: 1668291957,
     jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
   }
-  expect(() => l0Storage.guardClaims(claims)).toThrow('Invalid EXP claim')
+  expect(() => l0Storage.guardClaims(claims, {
+    claims: 'iss,iat,sub,jti,exp',
+    iss: 'com.mytiki.l0_storage',
+    clockSkew: 5
+  })).toThrow('Invalid EXP claim')
 })
 
 test('GuardClaims ISS Failure', () => {
@@ -78,7 +104,11 @@ test('GuardClaims ISS Failure', () => {
     iat: 1668291957,
     jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
   }
-  expect(() => l0Storage.guardClaims(claims)).toThrow('Invalid ISS claim')
+  expect(() => l0Storage.guardClaims(claims, {
+    claims: 'iss,iat,sub,jti,exp',
+    iss: 'com.mytiki.l0_storage',
+    clockSkew: 5
+  })).toThrow('Invalid ISS claim')
 })
 
 test('GuardClaims IAT Failure', () => {
@@ -89,5 +119,9 @@ test('GuardClaims IAT Failure', () => {
     iat: ~~(new Date().getTime() / 1000) + 100,
     jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
   }
-  expect(() => l0Storage.guardClaims(claims)).toThrow('Invalid IAT claim')
+  expect(() => l0Storage.guardClaims(claims, {
+    claims: 'iss,iat,sub,jti,exp',
+    iss: 'com.mytiki.l0_storage',
+    clockSkew: 5
+  })).toThrow('Invalid IAT claim')
 })
