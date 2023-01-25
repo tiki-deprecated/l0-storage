@@ -13,115 +13,117 @@ const testSub = 'GUuoWcj36EgBQY8HVIhsgXHaT1kyZPqKf0IyCzLb0z4/36mZYPaQuseSzSSlHQy
 const testExp = 1668295557
 const testJti = '72eaa63a-193d-4550-ba3c-51abf29abb6d'
 
-test('Decode Success', async () => {
-  const claims = await l0Storage.decode(testJwt, JSON.parse(testKey), {
-    name: 'ECDSA',
-    namedCurve: 'P-256',
-    hash: 'SHA-256'
+describe('l0Storage.js Tests', function () {
+  test('Decode Success', async () => {
+    const claims = await l0Storage.decode(testJwt, JSON.parse(testKey), {
+      name: 'ECDSA',
+      namedCurve: 'P-256',
+      hash: 'SHA-256'
+    })
+    expect(claims.iss).toBe(testIss)
+    expect(claims.iat).toBe(testIat)
+    expect(claims.sub).toBe(testSub)
+    expect(claims.exp).toBe(testExp)
+    expect(claims.jti).toBe(testJti)
   })
-  expect(claims.iss).toBe(testIss)
-  expect(claims.iat).toBe(testIat)
-  expect(claims.sub).toBe(testSub)
-  expect(claims.exp).toBe(testExp)
-  expect(claims.jti).toBe(testJti)
-})
 
-test('Decode Failure Bad JWT', () => {
-  expect(async () =>
-    await l0Storage.decode(
-      testJwt.replace('I', 'a'),
-      JSON.parse(testKey),
-      {
-        name: 'ECDSA',
-        namedCurve: 'P-256',
-        hash: 'SHA-256'
-      }
-    ).toThrow('Failed to validate JWT'))
-})
-
-test('Decode Failure Bad Key', () => {
-  expect(async () =>
-    await l0Storage.decode(
-      testJwt,
-      JSON.parse(testKey.replace('8', '9')),
-      {
-        name: 'ECDSA',
-        namedCurve: 'P-256',
-        hash: 'SHA-256'
-      }
-    ).toThrow('Failed to validate JWT'))
-})
-
-test('GuardClaims Success', () => {
-  const claims = {
-    iss: 'com.mytiki.l0_storage',
-    sub: 'GUuoWcj36EgBQY8HVIhsgXHaT1kyZPqKf0IyCzLb0z4/36mZYPaQuseSzSSlHQya41VE0EB3RfGqa8xYBWQYgVE/',
-    exp: ~~(new Date().getTime() / 1000) + 100,
-    iat: 1668291957,
-    jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
-  }
-  l0Storage.guardClaims(claims, {
-    claims: 'iss,iat,sub,jti,exp',
-    iss: 'com.mytiki.l0_storage',
-    clockSkew: 5
+  test('Decode Failure Bad JWT', () => {
+    expect(async () =>
+      await l0Storage.decode(
+        testJwt.replace('I', 'a'),
+        JSON.parse(testKey),
+        {
+          name: 'ECDSA',
+          namedCurve: 'P-256',
+          hash: 'SHA-256'
+        }
+      ).toThrow('Failed to validate JWT'))
   })
-})
 
-test('GuardClaims Missing Claim Failure', () => {
-  const claims = {
-    iss: 'com.mytiki.l0_storage',
-    exp: ~~(new Date().getTime() / 1000) + 100,
-    iat: 1668291957,
-    jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
-  }
-  expect(() => l0Storage.guardClaims(claims, {
-    claims: 'iss,iat,sub,jti,exp',
-    iss: 'com.mytiki.l0_storage',
-    clockSkew: 5
-  })).toThrow('Missing required claim: sub')
-})
+  test('Decode Failure Bad Key', () => {
+    expect(async () =>
+      await l0Storage.decode(
+        testJwt,
+        JSON.parse(testKey.replace('8', '9')),
+        {
+          name: 'ECDSA',
+          namedCurve: 'P-256',
+          hash: 'SHA-256'
+        }
+      ).toThrow('Failed to validate JWT'))
+  })
 
-test('GuardClaims Exp Failure', () => {
-  const claims = {
-    iss: 'com.mytiki.l0_storage',
-    sub: 'GUuoWcj36EgBQY8HVIhsgXHaT1kyZPqKf0IyCzLb0z4/36mZYPaQuseSzSSlHQya41VE0EB3RfGqa8xYBWQYgVE/',
-    exp: 1668295557,
-    iat: 1668291957,
-    jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
-  }
-  expect(() => l0Storage.guardClaims(claims, {
-    claims: 'iss,iat,sub,jti,exp',
-    iss: 'com.mytiki.l0_storage',
-    clockSkew: 5
-  })).toThrow('Invalid EXP claim')
-})
+  test('GuardClaims Success', () => {
+    const claims = {
+      iss: 'com.mytiki.l0_storage',
+      sub: 'GUuoWcj36EgBQY8HVIhsgXHaT1kyZPqKf0IyCzLb0z4/36mZYPaQuseSzSSlHQya41VE0EB3RfGqa8xYBWQYgVE/',
+      exp: ~~(new Date().getTime() / 1000) + 100,
+      iat: 1668291957,
+      jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
+    }
+    l0Storage.guardClaims(claims, {
+      claims: 'iss,iat,sub,jti,exp',
+      iss: 'com.mytiki.l0_storage',
+      clockSkew: 5
+    })
+  })
 
-test('GuardClaims ISS Failure', () => {
-  const claims = {
-    iss: 'dummy',
-    sub: 'GUuoWcj36EgBQY8HVIhsgXHaT1kyZPqKf0IyCzLb0z4/36mZYPaQuseSzSSlHQya41VE0EB3RfGqa8xYBWQYgVE/',
-    exp: ~~(new Date().getTime() / 1000) + 100,
-    iat: 1668291957,
-    jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
-  }
-  expect(() => l0Storage.guardClaims(claims, {
-    claims: 'iss,iat,sub,jti,exp',
-    iss: 'com.mytiki.l0_storage',
-    clockSkew: 5
-  })).toThrow('Invalid ISS claim')
-})
+  test('GuardClaims Missing Claim Failure', () => {
+    const claims = {
+      iss: 'com.mytiki.l0_storage',
+      exp: ~~(new Date().getTime() / 1000) + 100,
+      iat: 1668291957,
+      jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
+    }
+    expect(() => l0Storage.guardClaims(claims, {
+      claims: 'iss,iat,sub,jti,exp',
+      iss: 'com.mytiki.l0_storage',
+      clockSkew: 5
+    })).toThrow('Missing required claim: sub')
+  })
 
-test('GuardClaims IAT Failure', () => {
-  const claims = {
-    iss: 'com.mytiki.l0_storage',
-    sub: 'GUuoWcj36EgBQY8HVIhsgXHaT1kyZPqKf0IyCzLb0z4/36mZYPaQuseSzSSlHQya41VE0EB3RfGqa8xYBWQYgVE/',
-    exp: ~~(new Date().getTime() / 1000) + 100,
-    iat: ~~(new Date().getTime() / 1000) + 100,
-    jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
-  }
-  expect(() => l0Storage.guardClaims(claims, {
-    claims: 'iss,iat,sub,jti,exp',
-    iss: 'com.mytiki.l0_storage',
-    clockSkew: 5
-  })).toThrow('Invalid IAT claim')
+  test('GuardClaims Exp Failure', () => {
+    const claims = {
+      iss: 'com.mytiki.l0_storage',
+      sub: 'GUuoWcj36EgBQY8HVIhsgXHaT1kyZPqKf0IyCzLb0z4/36mZYPaQuseSzSSlHQya41VE0EB3RfGqa8xYBWQYgVE/',
+      exp: 1668295557,
+      iat: 1668291957,
+      jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
+    }
+    expect(() => l0Storage.guardClaims(claims, {
+      claims: 'iss,iat,sub,jti,exp',
+      iss: 'com.mytiki.l0_storage',
+      clockSkew: 5
+    })).toThrow('Invalid EXP claim')
+  })
+
+  test('GuardClaims ISS Failure', () => {
+    const claims = {
+      iss: 'dummy',
+      sub: 'GUuoWcj36EgBQY8HVIhsgXHaT1kyZPqKf0IyCzLb0z4/36mZYPaQuseSzSSlHQya41VE0EB3RfGqa8xYBWQYgVE/',
+      exp: ~~(new Date().getTime() / 1000) + 100,
+      iat: 1668291957,
+      jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
+    }
+    expect(() => l0Storage.guardClaims(claims, {
+      claims: 'iss,iat,sub,jti,exp',
+      iss: 'com.mytiki.l0_storage',
+      clockSkew: 5
+    })).toThrow('Invalid ISS claim')
+  })
+
+  test('GuardClaims IAT Failure', () => {
+    const claims = {
+      iss: 'com.mytiki.l0_storage',
+      sub: 'GUuoWcj36EgBQY8HVIhsgXHaT1kyZPqKf0IyCzLb0z4/36mZYPaQuseSzSSlHQya41VE0EB3RfGqa8xYBWQYgVE/',
+      exp: ~~(new Date().getTime() / 1000) + 100,
+      iat: ~~(new Date().getTime() / 1000) + 100,
+      jti: '72eaa63a-193d-4550-ba3c-51abf29abb6d'
+    }
+    expect(() => l0Storage.guardClaims(claims, {
+      claims: 'iss,iat,sub,jti,exp',
+      iss: 'com.mytiki.l0_storage',
+      clockSkew: 5
+    })).toThrow('Invalid IAT claim')
+  })
 })
