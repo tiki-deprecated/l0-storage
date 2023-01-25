@@ -40,3 +40,6 @@ application-local.properties
 
 # Maven Wrapper Jar
 .mvn/wrapper/maven-wrapper.jar
+
+# JEST Reports
+worker/*/reports/*.xml
