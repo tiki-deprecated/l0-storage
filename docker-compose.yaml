@@ -27,6 +27,11 @@ services:
       db:
         condition: service_healthy
 
+  # minIO 
+  minio:
+    image: minio/minio
+
+
   # Postgres database
   db:
     image: postgres:15.1-alpine
