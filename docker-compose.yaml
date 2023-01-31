@@ -27,10 +27,6 @@ services:
       db:
         condition: service_healthy
 
-  # minIO 
-  minio:
-    image: minio/minio
-
 
   # Postgres database
   db:
@@ -50,7 +46,17 @@ services:
 
   # S3-compat object storage
   storage:
+    container_name: minio
     image: minio/minio
+    environment:
+      MINIO_ROOT_USER: ted
+      MINIO_ROOT_PASSWORD: Tiki#Wiki#23
+    ports: 
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-storage:/data
+    command: server --console-address ":9001" /data
 
   # CloudFlare worker (handle file uploads at the edge)
   worker-upload:
@@ -69,3 +75,4 @@ services:
 
 volumes:
   db-data:
+  minio-storage:
