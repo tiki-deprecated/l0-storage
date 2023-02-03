@@ -46,7 +46,6 @@ services:
 
   # S3-compat object storage
   storage:
-    container_name: minio
     image: minio/minio
     environment:
       MINIO_ROOT_USER: ted
@@ -60,9 +59,11 @@ services:
 
   # CloudFlare worker (handle file uploads at the edge)
   worker-upload:
+    image: cloudflare/cloudflare
     build:
-      context: worker/
+      context: worker/upload
       args: []
+    working_dir: /app
     environment:
       L0_STORAGE_ENDPOINT: api:10507/api/latest/upload
       REMOTE_ID: ID-FOR-LOCAL-CLOUDFLARE-WORKER-CONTAINER
@@ -70,6 +71,8 @@ services:
       WASABI_ENDPOINT: storage-container-PLACEHOLDER
       WASABI_ID: ADD-THIS-FOR-MINIO
       WASABI_SECRET: ADD-THIS-TOO
+    volumes:
+      - './:/home/wrangler'
     ports:
       - 10507:10507
 
