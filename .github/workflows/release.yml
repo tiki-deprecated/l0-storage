@@ -133,7 +133,7 @@ jobs:
         run: doctl registry login --expiry-seconds 600
 
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: prod.dockerfile
