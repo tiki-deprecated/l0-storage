@@ -4,32 +4,20 @@
  */
 
 -- -----------------------------------------------------------------------
--- API ID
--- -----------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS api_id(
-    aid UUID PRIMARY KEY,
-    uid TEXT NOT NULL,
-    is_valid BOOLEAN NOT NULL DEFAULT FALSE,
-    created_utc TIMESTAMP WITH TIME ZONE NOT NULL,
-    modified_utc TIMESTAMP WITH TIME ZONE NOT NULL
-);
-
--- -----------------------------------------------------------------------
 -- TOKEN
 -- -----------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS token(
-    tid UUID PRIMARY KEY,
-    aid UUID NOT NULL,
+    token_id UUID PRIMARY KEY,
+    app_id UUID NOT NULL,
     urn_prefix TEXT NOT NULL,
-    created_utc TIMESTAMP WITH TIME ZONE NOT NULL,
-    FOREIGN KEY(aid) REFERENCES api_id(aid)
+    created_utc TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 -- -----------------------------------------------------------------------
 -- REPORT
 -- -----------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS report(
-    rid BIGSERIAL PRIMARY KEY,
+    report_id BIGSERIAL PRIMARY KEY,
     urn_prefix TEXT NOT NULL,
     size_bytes BIGINT,
     created_utc TIMESTAMP WITH TIME ZONE NOT NULL

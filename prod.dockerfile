@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk:11
+FROM azul/zulu-openjdk:19
 VOLUME /tmp
 VOLUME /target
 
@@ -11,5 +11,5 @@ RUN apt-get update && apt-get install -y apt-transport-https ca-certificates cur
     apt-get update && \
     apt-get -y install doppler
 
-EXPOSE 8502
+EXPOSE 8507
 CMD ["doppler", "run", "-c", "prd", "--", "java", "-Djava.security.egd=file:/dev/./urandom", "-Dspring.profiles.active=prod", "-jar", "/app.jar"]

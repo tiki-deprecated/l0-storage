@@ -8,6 +8,11 @@ module.exports = async () => {
     verbose: true,
     globals: {
       crypto: require('crypto')
-    }
+    },
+    reporters: [
+        'default',
+        ['jest-junit', {outputDirectory: 'reports', outputName: 'report.xml'}],
+        'github-actions'
+    ],
   }
 }

@@ -5,9 +5,11 @@
 
 package com.mytiki.l0_storage.features.latest.token;
 
-import com.mytiki.l0_storage.features.latest.api_id.ApiIdDO;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -15,29 +17,28 @@ import java.util.UUID;
 @Entity
 @Table(name = "token")
 public class TokenDO implements Serializable {
-    private UUID tid;
-    private ApiIdDO apiId;
+    private UUID id;
+    private UUID appId;
     private String urnPrefix;
     private ZonedDateTime created;
 
     @Id
-    @Column(name = "tid")
-    public UUID getTid() {
-        return tid;
+    @Column(name = "token_id")
+    public UUID getId() {
+        return id;
     }
 
-    public void setTid(UUID tid) {
-        this.tid = tid;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
-    @ManyToOne
-    @JoinColumn(name="aid")
-    public ApiIdDO getApiId() {
-        return apiId;
+    @Column(name = "app_id")
+    public UUID getAppId() {
+        return appId;
     }
 
-    public void setApiId(ApiIdDO apiId) {
-        this.apiId = apiId;
+    public void setAppId(UUID appId) {
+        this.appId = appId;
     }
 
     @Column(name = "urn_prefix")

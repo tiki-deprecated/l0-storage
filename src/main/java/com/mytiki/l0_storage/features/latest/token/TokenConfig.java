@@ -5,7 +5,6 @@
 
 package com.mytiki.l0_storage.features.latest.token;
 
-import com.mytiki.l0_storage.features.latest.api_id.ApiIdService;
 import com.mytiki.l0_storage.utilities.Constants;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -58,9 +57,8 @@ public class TokenConfig {
     public TokenService tokenService(
             @Autowired TokenRepository repository,
             @Autowired @Qualifier("tokenJwsSigner") JWSSigner signer,
-            @Autowired ApiIdService apiIdService,
             @Value("${com.mytiki.l0_storage.token.exp}") long exp){
-        return new TokenService(repository, signer, apiIdService, exp);
+        return new TokenService(repository, signer, exp);
     }
 
     @Bean("tokenJwkSet")

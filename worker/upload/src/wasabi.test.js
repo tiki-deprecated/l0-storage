@@ -28,38 +28,40 @@ const testStringToSign = 'AWS4-HMAC-SHA256\n' +
 const testSignature = 'f0e8bdb87c964420e857bd35b5d6ed310bd44f0170aba48dd91039c6036bdb41'
 const testAuthorization = 'AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20130524/us-east-1/s3/aws4_request,SignedHeaders=host;range;x-amz-content-sha256;x-amz-date,Signature=f0e8bdb87c964420e857bd35b5d6ed310bd44f0170aba48dd91039c6036bdb41'
 
-test('CanonicalRequest Success', async () => {
-  const hashedPayload = wasabi.buf2hex(
-    await crypto.subtle.digest('SHA-256', new TextEncoder().encode('')))
+describe('wasabi.js Tests', function () {
+  test('CanonicalRequest Success', async () => {
+    const hashedPayload = wasabi.buf2hex(
+      await crypto.subtle.digest('SHA-256', new TextEncoder().encode('')))
 
-  const req = wasabi.canonicalRequest(
-    'GET',
-    '/test.txt',
-    undefined,
-    'host:examplebucket.s3.amazonaws.com' + '\n' +
-      'range:bytes=0-9' + '\n' +
-      'x-amz-content-sha256:' + hashedPayload + '\n' +
-      'x-amz-date:' + wasabi.date2timestamp(testDate) + '\n',
-    'host;range;x-amz-content-sha256;x-amz-date',
-    hashedPayload
-  )
+    const req = wasabi.canonicalRequest(
+      'GET',
+      '/test.txt',
+      undefined,
+      'host:examplebucket.s3.amazonaws.com' + '\n' +
+        'range:bytes=0-9' + '\n' +
+        'x-amz-content-sha256:' + hashedPayload + '\n' +
+        'x-amz-date:' + wasabi.date2timestamp(testDate) + '\n',
+      'host;range;x-amz-content-sha256;x-amz-date',
+      hashedPayload
+    )
 
-  expect(req).toBe(testCanonicalRequest)
-})
+    expect(req).toBe(testCanonicalRequest)
+  })
 
-test('StringToSign Success', async () => {
-  const s2s = await wasabi.stringToSign(testDate, testRegion, testService, testCanonicalRequest)
-  expect(s2s).toBe(testStringToSign)
-})
+  test('StringToSign Success', async () => {
+    const s2s = await wasabi.stringToSign(testDate, testRegion, testService, testCanonicalRequest)
+    expect(s2s).toBe(testStringToSign)
+  })
 
-test('Signature Success', async () => {
-  const signKey = await wasabi.signingKey(testKey, testDate, testRegion, testService)
-  const signature = wasabi.buf2hex(await wasabi.hmacSha(new TextEncoder().encode(testStringToSign), signKey))
-  expect(signature).toBe(testSignature)
-})
+  test('Signature Success', async () => {
+    const signKey = await wasabi.signingKey(testKey, testDate, testRegion, testService)
+    const signature = wasabi.buf2hex(await wasabi.hmacSha(new TextEncoder().encode(testStringToSign), signKey))
+    expect(signature).toBe(testSignature)
+  })
 
-test('Authorization Success', async () => {
-  const signedHeaders = 'host;range;x-amz-content-sha256;x-amz-date'
-  const authorization = wasabi.authorization(testId, testDate, testRegion, testService, signedHeaders, testSignature)
-  expect(authorization).toBe(testAuthorization)
+  test('Authorization Success', async () => {
+    const signedHeaders = 'host;range;x-amz-content-sha256;x-amz-date'
+    const authorization = wasabi.authorization(testId, testDate, testRegion, testService, signedHeaders, testSignature)
+    expect(authorization).toBe(testAuthorization)
+  })
 })

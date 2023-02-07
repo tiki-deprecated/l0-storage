@@ -3,32 +3,22 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-const url = 'https://storage.l0.mytiki.com/api/latest/report'
-const jwtAlg = {
-  name: 'ECDSA',
-  namedCurve: 'P-256',
-  hash: 'SHA-256'
-}
-const reqClaims = ['iss', 'iat', 'sub', 'jti', 'exp']
-const iss = 'com.mytiki.l0_storage'
-const clockSkewInMinutes = 5
+import * as b64 from './b64.js'
 
 export { report, decode, guardClaims }
 
-async function report (clientId, clientSecret, path, sizeBytes) {
-  return fetch(
-    new Request(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Basic ' + btoa(clientId + ':' + clientSecret)
-      },
-      body: JSON.stringify({ path, sizeBytes })
-    })
-  )
+async function report (url, key, body) {
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Basic ' + btoa(key.id + ':' + key.secret)
+    },
+    body: JSON.stringify(body)
+  })
 }
 
-async function decode (jwt, pubKey) {
+async function decode (jwt, pubKey, jwtAlg) {
   const split = jwt.split('.')
   const headerB64 = split[0]
   const payloadB64 = split[1]
@@ -38,32 +28,23 @@ async function decode (jwt, pubKey) {
     'jwk', pubKey, jwtAlg, false, ['verify'])
 
   const isValid = await crypto.subtle.verify(jwtAlg, cryptoKey,
-    b64UrlDecode(signatureB64), new TextEncoder().encode([headerB64, payloadB64].join('.')))
+    b64.decode(signatureB64, true), new TextEncoder().encode([headerB64, payloadB64].join('.')))
 
   if (!isValid) { throw new Error('Failed to validate JWT') }
-  return JSON.parse(new TextDecoder().decode(b64UrlDecode(payloadB64)))
+  return JSON.parse(new TextDecoder().decode(b64.decode(payloadB64, true)))
 }
 
-function guardClaims (claims) {
+function guardClaims (req, config) {
+  const reqClaims = config.claims.split(',')
   reqClaims.forEach((claim, i) => {
-    if (claims[claim] == null) { throw new Error('Missing required claim: ' + claim) }
+    if (req[claim] == null) { throw new Error('Missing required claim: ' + claim) }
   })
 
-  if (claims.iss !== iss) { throw new Error('Invalid ISS claim') }
+  if (req.iss !== config.iss) { throw new Error('Invalid ISS claim') }
 
-  const iatDate = new Date(claims.iat * 1000)
-  const expDate = new Date((claims.exp * 1000) + (clockSkewInMinutes * 60 * 1000))
+  const iatDate = new Date(req.iat * 1000)
+  const expDate = new Date((req.exp * 1000) + (config.clockSkew * 60 * 1000))
 
   if (iatDate >= new Date()) throw new Error('Invalid IAT claim')
   if (expDate < new Date()) throw new Error('Invalid EXP claim')
-}
-
-// from https://thewoods.blog/base64url/
-function b64UrlDecode (value) {
-  const m = value.length % 4
-  return Uint8Array.from(atob(
-    value.replace(/-/g, '+')
-      .replace(/_/g, '/')
-      .padEnd(value.length + (m === 0 ? 0 : 4 - m), '=')
-  ), c => c.charCodeAt(0)).buffer
 }
