@@ -14,11 +14,11 @@ services:
   # REST API service
   api:
     build:
-      context: ..
+      context: ../
       dockerfile: dev.dockerfile
       target: development
-      args:
-        - JAR_FILE=target/*.jar
+#      args:
+#        - JAR_FILE=target/*.jar
     environment:
       SRPING_DATASOURCE_PASSWORD: postgres
       SPRING_DATASOURCE_URL: "jdbc:postgresql://db/postgres"
@@ -44,7 +44,7 @@ services:
       - 5432:5432
     volumes:
       - db-data:/var/lib/postgresql/data
-      - "./database:/docker-entrypoint-initdb.d"
+      - "../database:/docker-entrypoint-initdb.d"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
       interval: 10s
@@ -82,7 +82,7 @@ services:
       WASABI_ID: root
       WASABI_SECRET: miniopass
     ports:
-      - 10507:10507
+      - 10508:10507
 
 volumes:
   db-data:
