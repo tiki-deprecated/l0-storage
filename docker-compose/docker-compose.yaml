@@ -4,8 +4,7 @@ services:
   # Auth service
   auth:
     build:
-      context: auth
-      dockerfile: dev.dockerfile
+      dockerfile: auth.dockerfile
     ports:
       - 8000:80
     environment:
@@ -14,11 +13,10 @@ services:
   # REST API service
   api:
     build:
-      context: ../
-      dockerfile: dev.dockerfile
+      context: ..
+      dockerfile: docker-compose/api.dockerfile
       target: development
-#      args:
-#        - JAR_FILE=target/*.jar
+    working_dir: /app
     environment:
       SRPING_DATASOURCE_PASSWORD: postgres
       SPRING_DATASOURCE_URL: "jdbc:postgresql://db/postgres"
@@ -29,8 +27,6 @@ services:
       COM_MYTIKI_L0_STORAGE_TOKEN_PRIVATE_KEY: MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCAG89A2jCBIelwzQasZz1tGFcXtOSrSF7YxdxQQPxNERg==
     ports:
       - 10507:10507
-    volumes:
-      - ./:/app
     depends_on:
       db:
         condition: service_healthy
@@ -67,8 +63,8 @@ services:
   # CloudFlare worker (handle file uploads at the edge)
   worker-upload:
     build:
-      context: ../worker/upload
-      dockerfile: dev.dockerfile
+      context: ..
+      dockerfile: docker-compose/worker-upload.dockerfile
       args: []
     working_dir: /app
     environment:

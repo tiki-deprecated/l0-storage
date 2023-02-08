@@ -4,10 +4,10 @@ RUN apt update -y
 RUN apt install wget -y
 
 WORKDIR /app
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
+COPY ../.mvn .mvn
+COPY ../mvnw ../pom.xml ./
 RUN ./mvnw dependency:resolve
-COPY src ./src
+COPY ../src ./src
 
 FROM base as development
 EXPOSE 10502
