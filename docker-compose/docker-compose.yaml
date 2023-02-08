@@ -4,7 +4,8 @@ services:
   # Auth service
   auth:
     build:
-      context: docker/auth
+      context: auth
+      dockerfile: dev.dockerfile
     ports:
       - 8000:80
     environment:
@@ -13,7 +14,7 @@ services:
   # REST API service
   api:
     build:
-      context: .
+      context: ..
       dockerfile: dev.dockerfile
       target: development
       args:
@@ -65,9 +66,9 @@ services:
 
   # CloudFlare worker (handle file uploads at the edge)
   worker-upload:
-    image: cloudflare/cloudflare
     build:
-      context: worker/upload
+      context: ../worker/upload
+      dockerfile: dev.dockerfile
       args: []
     working_dir: /app
     environment:
@@ -80,8 +81,6 @@ services:
       WASABI_SERVICE: s3
       WASABI_ID: root
       WASABI_SECRET: miniopass
-    volumes:
-      - "./:/home/wrangler"
     ports:
       - 10507:10507
 
