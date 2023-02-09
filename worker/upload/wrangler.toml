@@ -2,6 +2,7 @@ name = "l0-storage-upload"
 main = "src/index.js"
 account_id = "5c5263e05bb1e54242b1afb12a5c9259"
 
+# TODO: Make this endpoint configurable (use L0_STORAGE_ENDPOINT env var)
 routes = [
     { pattern = "storage.l0.mytiki.com/api/latest/upload", zone_id = "7be31970110fa56b1f8e1fe915a8b938" }
 ]

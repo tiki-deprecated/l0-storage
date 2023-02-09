@@ -1,0 +1,85 @@
+version: '3'
+
+services:
+  # Auth service
+  auth:
+    build:
+      dockerfile: auth.dockerfile
+    ports:
+      - 8000:80
+    environment:
+      SERVER_LOG_LEVEL: info
+    
+  # REST API service
+  api:
+    build:
+      context: ..
+      dockerfile: docker-compose/api.dockerfile
+      target: development
+    working_dir: /app
+    environment:
+      SRPING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://db/postgres"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: "http://auth/.well-known/jwks.json"
+      COM_MYTIKI_L0_STORAGE_REMOTE_WORKER_ID: worker
+      COM_MYTIKI_L0_STORAGE_REMOTE_WORKER_SECRET: worker
+      COM_MYTIKI_L0_STORAGE_TOKEN_KID: 12345
+      COM_MYTIKI_L0_STORAGE_TOKEN_PRIVATE_KEY: MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCAG89A2jCBIelwzQasZz1tGFcXtOSrSF7YxdxQQPxNERg==
+    ports:
+      - 10507:10507
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Postgres database
+  db:
+    image: postgres:15.1-alpine
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - "../database:/docker-entrypoint-initdb.d"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # S3-compat object storage
+  storage:
+    image: minio/minio
+    environment:
+      MINIO_ROOT_USER: root
+      MINIO_ROOT_PASSWORD: miniopass
+    ports: 
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-storage:/data
+    command: server --console-address ":9001" /data
+
+  # CloudFlare worker (handle file uploads at the edge)
+  worker-upload:
+    build:
+      context: ..
+      dockerfile: docker-compose/worker-upload.dockerfile
+      args: []
+    working_dir: /app
+    environment:
+      L0_STORAGE_ENDPOINT: "http://api:10507/api/latest/upload"
+      L0_STORAGE_JWT_JWKS: '{ "kty": "EC", "use": "sig", "crv": "P-256", "kid": "12345", "x": "zAq5eyNt6b25XGckC5u4whIl558xs-IzogJqjygysZo", "y": "hjwlv3xt0L10XiJASkjOFHUxI_72ZeLI378trg8pN6c" }'
+      REMOTE_ID: worker
+      REMOTE_SECRET: worker
+      WASABI_BUCKET: data
+      WASABI_REGION: us-east-1
+      WASABI_SERVICE: s3
+      WASABI_ID: root
+      WASABI_SECRET: miniopass
+    ports:
+      - 10508:10507
+
+volumes:
+  db-data:
+  minio-storage:
