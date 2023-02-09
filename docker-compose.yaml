@@ -4,7 +4,7 @@ services:
   # Auth service
   auth:
     build:
-      dockerfile: auth.dockerfile
+      dockerfile: mock/auth/auth.dockerfile
     ports:
       - 8000:80
     environment:
@@ -14,7 +14,7 @@ services:
   api:
     build:
       context: ..
-      dockerfile: docker-compose/api.dockerfile
+      dockerfile: docker-compose/Dockerfile
       target: development
     working_dir: /app
     environment:
@@ -64,7 +64,7 @@ services:
   worker-upload:
     build:
       context: ..
-      dockerfile: docker-compose/worker-upload.dockerfile
+      dockerfile: docker-compose/Dockerfile
       args: []
     working_dir: /app
     environment:
