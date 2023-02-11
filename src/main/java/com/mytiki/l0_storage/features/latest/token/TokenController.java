@@ -41,7 +41,7 @@ public class TokenController {
     @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-token-post",
             summary = "Request Access Token",
             description = "Request an access token for uploading to storage bucket",
-            security = @SecurityRequirement(name = "apiId"),
+            security = @SecurityRequirement(name = "jwt"),
             responses = {
                 @ApiResponse(responseCode = "200", description = "OK",
                         content = @Content(schema = @Schema(implementation = TokenAORsp.class))),
