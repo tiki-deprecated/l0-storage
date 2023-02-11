@@ -5,7 +5,7 @@ info:
   license:
     name: MIT
     url: https://github.com/tiki/l0-storage/blob/main/LICENSE
-  version: 0.0.15
+  version: 0.0.16
 servers:
 - url: https://storage.l0.mytiki.com
 paths:
@@ -46,12 +46,6 @@ paths:
       summary: Request Access Token
       description: Request an access token for uploading to storage bucket
       operationId: l0-storage-token-post
-      parameters:
-      - name: x-api-id
-        in: header
-        required: true
-        schema:
-          type: string
       requestBody:
         content:
           application/json:
@@ -72,7 +66,7 @@ paths:
         "417":
           description: Expectation Failed
       security:
-      - apiId: []
+      - jwt: []
   /api/latest/report:
     post:
       tags:
@@ -93,22 +87,6 @@ paths:
           description: Forbidden
       security:
       - remote: []
-  /api/latest/api-id/new:
-    post:
-      tags:
-      - API ID
-      summary: Create an API Id
-      description: Request a new API Id for the authorized user
-      operationId: l0-storage-api-id-post
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiIdAORsp'
-      security:
-      - jwt: []
   /health:
     get:
       tags:
@@ -125,84 +103,6 @@ paths:
                 $ref: '#/components/schemas/ApiError'
               example:
                 message: OK
-  /api/latest/api-id:
-    get:
-      tags:
-      - API ID
-      summary: Get API Ids
-      description: Get all API Ids for the authorized user
-      operationId: l0-storage-api-ids-get
-      parameters:
-      - name: page
-        in: query
-        required: false
-        schema:
-          type: integer
-          format: int32
-          default: 0
-      - name: size
-        in: query
-        required: false
-        schema:
-          type: integer
-          format: int32
-          default: 100
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiPageApiIdAORsp'
-      security:
-      - jwt: []
-  /api/latest/api-id/id/{api-id}:
-    get:
-      tags:
-      - API ID
-      summary: Get API Id
-      description: Get the metadata for a single API Id
-      operationId: l0-storage-api-id-get
-      parameters:
-      - name: api-id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiIdAORsp'
-        "404":
-          description: Not Found
-      security:
-      - jwt: []
-    delete:
-      tags:
-      - API ID
-      summary: Revoke API Id
-      description: Careful! This action cannot be undone
-      operationId: l0-storage-api-id-delete
-      parameters:
-      - name: api-id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiIdAORsp'
-        "404":
-          description: Not Found
-      security:
-      - jwt: []
 components:
   schemas:
     TokenAORsp:
@@ -234,19 +134,6 @@ components:
         sizeBytes:
           type: integer
           format: int64
-    ApiIdAORsp:
-      type: object
-      properties:
-        apiId:
-          type: string
-        valid:
-          type: boolean
-        created:
-          type: string
-          format: date-time
-        modified:
-          type: string
-          format: date-time
     ApiError:
       type: object
       properties:
@@ -262,33 +149,10 @@ components:
           type: object
           additionalProperties:
             type: string
-    ApiPageApiIdAORsp:
-      type: object
-      properties:
-        elements:
-          type: array
-          items:
-            $ref: '#/components/schemas/ApiIdAORsp'
-        size:
-          type: integer
-          format: int32
-        totalElements:
-          type: integer
-          format: int64
-        totalPages:
-          type: integer
-          format: int32
-        page:
-          type: integer
-          format: int32
   securitySchemes:
     remote:
       type: http
       scheme: basic
-    apiId:
-      type: apiKey
-      name: X-API-ID
-      in: header
     jwt:
       type: http
       scheme: bearer
