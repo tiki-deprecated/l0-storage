@@ -12,7 +12,7 @@
 
     <groupId>com.mytiki</groupId>
     <artifactId>l0_storage</artifactId>
-    <version>0.0.17</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
 
     <name>L0 Storage</name>
