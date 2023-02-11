@@ -136,7 +136,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: prod.dockerfile
+          file: Dockerfile
           push: true
           tags: |
             registry.digitalocean.com/tiki/l0-storage:${{ needs.bump_and_tag.outputs.version }}

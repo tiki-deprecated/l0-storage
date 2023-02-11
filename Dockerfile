@@ -6,7 +6,7 @@ RUN apt install wget -y
 
 WORKDIR /app
 COPY .mvn .mvn
-COPY mvnw ../pom.xml ./
+COPY mvnw pom.xml ./
 RUN ./mvnw dependency:resolve
 COPY src ./src
 
