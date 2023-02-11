@@ -1,4 +1,24 @@
-FROM azul/zulu-openjdk:19
+FROM azul/zulu-openjdk:19 as base
+
+FROM base as development
+RUN apt update -y
+RUN apt install wget -y
+
+WORKDIR /app
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+RUN ./mvnw dependency:resolve
+COPY src ./src
+
+FROM development as build
+RUN ./mvnw package
+
+FROM development as run
+EXPOSE 10502
+CMD ["./mvnw", "spring-boot:run", "-Dspring-boot.run.profiles=dev", "-Dspring-boot.run.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000'"]
+
+FROM base as deploy
+
 VOLUME /tmp
 VOLUME /target
 
