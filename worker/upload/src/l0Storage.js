@@ -12,7 +12,7 @@ async function report (url, key, body) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Basic ' + btoa(key.id + ':' + key.secret)
+      Authorization: 'Basic ' + btoa(`${key.id}:${key.secret}`)
     },
     body: JSON.stringify(body)
   })
