@@ -1,0 +1,122 @@
+openapi: 3.0.1
+info:
+  title: L0 Storage
+  description: Immutable Storage Service
+  license:
+    name: MIT
+    url: https://github.com/tiki/l0-storage/blob/main/LICENSE
+  version: 1.0.0
+servers:
+- url: https://storage.l0.mytiki.com
+paths:
+  /api/latest/upload:
+    post:
+      tags:
+      - ""
+      summary: Upload Content
+      description: Upload a block/pub.key to storage bucket
+      operationId: l0-storage-upload-post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+                content:
+                  type: string
+      responses:
+        "201":
+          description: Created
+      security:
+      - jwt: []
+  /api/latest/token:
+    post:
+      tags:
+      - ""
+      summary: Request Access Token
+      description: Request an access token for uploading to storage bucket
+      operationId: l0-storage-token-post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenAOReq'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenAORsp'
+      security:
+      - oauth: []
+  /health:
+    get:
+      tags:
+      - HEALTH
+      summary: Health Check
+      description: Get service status
+      operationId: l0-storage-health-get
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                message: OK
+components:
+  schemas:
+    TokenAOReq:
+      type: object
+      properties:
+        pubKey:
+          type: string
+        signature:
+          type: string
+        stringToSign:
+          type: string
+    TokenAORsp:
+      type: object
+      properties:
+        type:
+          type: string
+        token:
+          type: string
+        expires:
+          type: string
+          format: date-time
+        urnPrefix:
+          type: string
+    ApiError:
+      type: object
+      properties:
+        id:
+          type: string
+        message:
+          type: string
+        detail:
+          type: string
+        help:
+          type: string
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+  securitySchemes:
+    oauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.l0.mytiki.com/api/latest/oauth/token
+          refreshUrl: https://auth.l0.mytiki.com/api/latest/oauth/token
+          scopes:
+            storage: this service
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
