@@ -111,6 +111,10 @@
                 <configuration>
                     <wait>1000</wait>
                     <maxAttempts>360</maxAttempts>
+                    <profiles>
+                        <profile>ci</profile>
+                        <profile>dev</profile>
+                    </profiles>
                 </configuration>
                 <executions>
                     <execution>
@@ -142,7 +146,7 @@
                 <configuration>
                     <apiDocsUrl>http://localhost:10507/v3/api-docs.yaml</apiDocsUrl>
                     <outputFileName>openapi.yaml</outputFileName>
-                    <outputDir>${project.basedir}/docs</outputDir>
+                    <outputDir>${project.basedir}</outputDir>
                 </configuration>
             </plugin>
             <plugin>
