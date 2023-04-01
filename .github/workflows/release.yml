@@ -19,7 +19,7 @@ concurrency:
 jobs:
   test_and_push:
     runs-on: ubuntu-latest
-    needs: bump_and_tag
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/')
     environment: Production
     services:
       postgres:
