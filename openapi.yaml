@@ -5,7 +5,7 @@ info:
   license:
     name: MIT
     url: https://github.com/tiki/l0-storage/blob/main/LICENSE
-  version: 1.0.0
+  version: 1.0.1
 servers:
 - url: https://storage.l0.mytiki.com
 paths:
@@ -53,22 +53,6 @@ paths:
                 $ref: '#/components/schemas/TokenAORsp'
       security:
       - oauth: []
-  /health:
-    get:
-      tags:
-      - HEALTH
-      summary: Health Check
-      description: Get service status
-      operationId: l0-storage-health-get
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiError'
-              example:
-                message: OK
 components:
   schemas:
     TokenAOReq:
@@ -92,21 +76,6 @@ components:
           format: date-time
         urnPrefix:
           type: string
-    ApiError:
-      type: object
-      properties:
-        id:
-          type: string
-        message:
-          type: string
-        detail:
-          type: string
-        help:
-          type: string
-        properties:
-          type: object
-          additionalProperties:
-            type: string
   securitySchemes:
     oauth:
       type: oauth2
