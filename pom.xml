@@ -12,7 +12,7 @@
 
     <groupId>com.mytiki</groupId>
     <artifactId>l0_storage</artifactId>
-    <version>0.1.0</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>L0 Storage</name>
@@ -65,19 +65,19 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.5.4</version>
+            <version>42.6.0</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
-            <version>2.0.3</version>
+            <version>2.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-common</artifactId>
-            <version>2.0.3</version>
+            <version>2.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.openapitools</groupId>
@@ -88,12 +88,12 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-spring-boot-starter</artifactId>
-            <version>6.15.0</version>
+            <version>6.16.0</version>
         </dependency>
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-logback</artifactId>
-            <version>6.15.0</version>
+            <version>6.16.0</version>
         </dependency>
 
         <dependency>
@@ -111,6 +111,10 @@
                 <configuration>
                     <wait>1000</wait>
                     <maxAttempts>360</maxAttempts>
+                    <profiles>
+                        <profile>ci</profile>
+                        <profile>dev</profile>
+                    </profiles>
                 </configuration>
                 <executions>
                     <execution>
@@ -142,7 +146,7 @@
                 <configuration>
                     <apiDocsUrl>http://localhost:10507/v3/api-docs.yaml</apiDocsUrl>
                     <outputFileName>openapi.yaml</outputFileName>
-                    <outputDir>${project.basedir}/docs</outputDir>
+                    <outputDir>${project.basedir}</outputDir>
                 </configuration>
             </plugin>
             <plugin>

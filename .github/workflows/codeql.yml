@@ -25,14 +25,16 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Set up JDK 19
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '19'
+          java-version: '20'
           distribution: 'zulu'
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
+        with:
+          language: 'java'
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v2

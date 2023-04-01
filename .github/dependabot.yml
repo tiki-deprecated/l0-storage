@@ -1,12 +1,5 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/worker/upload/"
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "npm"
-
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
