@@ -23,7 +23,7 @@ import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
-import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.security.*;
 import io.swagger.v3.oas.models.servers.Server;
 import jakarta.annotation.PostConstruct;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Import;
 
 import java.security.Security;
 import java.util.Collections;
+import java.util.List;
 import java.util.TimeZone;
 
 @Import({
@@ -54,7 +55,7 @@ public class AppConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("L0 Storage")
-                        .description("Long-term immutable storage")
+                        .description("Immutable Storage Service")
                         .version(appVersion)
                         .license(new License()
                                 .name("MIT")
@@ -63,43 +64,29 @@ public class AppConfig {
                         new Server()
                                 .url("https://storage.l0.mytiki.com")))
                 .components(new Components()
-                        .addSecuritySchemes("remote",
-                                new SecurityScheme()
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("basic"))
-                        .addSecuritySchemes("jwt",
-                                new SecurityScheme()
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")))
-                .path("/api/latest/upload",
-                        new PathItem().post(
-                                new Operation()
-                                        .tags(Collections.singletonList("STORAGE"))
-                                        .operationId(Constants.PROJECT_DASH_PATH +  "-upload-post")
-                                        .summary("Upload Content")
-                                        .description("Upload a block/pub.key to storage bucket")
-                                        .requestBody(new RequestBody()
-                                                .content(new Content()
-                                                        .addMediaType("application/json",
-                                                                new MediaType()
-                                                                        .schema(new JsonSchema()
-                                                                                .type("object")
-                                                                                .addProperty("key", new StringSchema())
-                                                                                .addProperty("content", new StringSchema())
-                                                                        ))))
-                                        .responses(new ApiResponses()
-                                                .addApiResponse("201",
-                                                        new ApiResponse().description("Created"))
-                                                .addApiResponse("400",
-                                                        new ApiResponse().description("Bad Request"))
-                                                .addApiResponse("401",
-                                                        new ApiResponse().description("Unauthorized"))
-                                                .addApiResponse("405",
-                                                        new ApiResponse().description("Method Not Allowed"))
-                                                .addApiResponse("413",
-                                                        new ApiResponse().description("Payload Too Large"))
-                                                .addApiResponse("424",
-                                                        new ApiResponse().description("Failed Dependency")))));
+                        .addSecuritySchemes("oauth", new SecurityScheme()
+                                .type(SecurityScheme.Type.OAUTH2)
+                                .flows(new OAuthFlows()
+                                        .clientCredentials(new OAuthFlow()
+                                                .tokenUrl("https://auth.l0.mytiki.com/api/latest/oauth/token")
+                                                .refreshUrl("https://auth.l0.mytiki.com/api/latest/oauth/token")
+                                                .scopes(new Scopes().addString("storage","this service")))))
+                        .addSecuritySchemes("jwt", new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")))
+                .path("/api/latest/upload", new PathItem().post(new Operation()
+                        .tags(Collections.singletonList(""))
+                        .operationId(Constants.PROJECT_DASH_PATH +  "-upload-post")
+                        .summary("Upload Content")
+                        .security(List.of(new SecurityRequirement().addList("jwt")))
+                        .description("Upload a block/pub.key to storage bucket")
+                        .requestBody(new RequestBody().content(new Content()
+                                .addMediaType("application/json", new MediaType()
+                                        .schema(new JsonSchema().type("object")
+                                                        .addProperty("key", new StringSchema())
+                                                        .addProperty("content", new StringSchema())))))
+                        .responses(new ApiResponses()
+                                .addApiResponse("201", new ApiResponse().description("Created")))));
     }
 }

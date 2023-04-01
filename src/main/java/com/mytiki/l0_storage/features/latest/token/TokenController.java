@@ -10,9 +10,6 @@ import com.mytiki.l0_storage.utilities.Constants;
 import com.mytiki.spring_rest_api.ApiConstants;
 import com.mytiki.spring_rest_api.ApiExceptionBuilder;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
@@ -25,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
-@Tag(name = "STORAGE")
+@Tag(name = "")
 @RestController
 @RequestMapping(value = TokenController.PATH_CONTROLLER)
 public class TokenController {
@@ -41,13 +38,7 @@ public class TokenController {
     @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-token-post",
             summary = "Request Access Token",
             description = "Request an access token for uploading to storage bucket",
-            security = @SecurityRequirement(name = "jwt"),
-            responses = {
-                @ApiResponse(responseCode = "200", description = "OK",
-                        content = @Content(schema = @Schema(implementation = TokenAORsp.class))),
-                @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
-                @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
-                @ApiResponse(responseCode = "417", description = "Expectation Failed", content = @Content)})
+            security = @SecurityRequirement(name = "oauth"))
     @RequestMapping(method = RequestMethod.POST)
     public TokenAORsp post(
             Authentication authentication,
